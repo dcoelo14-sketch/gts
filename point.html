@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>GPS Zones – Temps réel</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.night {
+      background: #111;
+      color: #eee;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 8px 0;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #0078ff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:active {
+      background: #005fcc;
+    }
+
+    #status, #distance, #timing {
+      font-size: 18px;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #speed {
+      font-weight: bold;
+      font-size: 48px;
+      text-align: center;
+      margin-top: 20px;
+      color: #222;
+    }
+
+    body.night #speed {
+      color: #fff;
+    }
+
+    .ok {
+      background: #d4f8d4;
+      color: #0a7a0a;
+    }
+
+    body.night .ok {
+      background: #003300;
+      color: #66ff66;
+    }
+
+    .ko {
+      background: #ffd6d6;
+      color: #a30000;
+    }
+
+    body.night .ko {
+      background: #330000;
+      color: #ff6666;
+    }
+
+    .icon {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .icon img {
+      width: 120px;
+      max-width: 60%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <button onclick="startTracking()">Activer la géolocalisation</button>
+  <button onclick="stopTracking()">Arrêter la géolocalisation</button>
+  <button onclick="toggleNightMode()">Mode nuit</button>
+
+  <div id="status"></div>
+  <div id="distance"></div>
+  <div id="speed">-- km/h</div>
+  <div id="timing">Statut horaire : --</div>
+  <div id="icon" class="icon"></div>
+
+  <audio id="alertSound" src="sounds/alert.mp3" preload="auto"></audio>
+
+</div>
+
+<script>
+/* ============================
+   ZONES GPS
+   ============================ */
+
+const zones = [
+  {
+    name: "Sortie",
+    lat: 48.29315,
+    lng: -0.94432,
+    radius: 150,
+    icon: "images/f50.png",
+    expectedTime: "19:14"
+  },
+  {
+    name: "Radar 50",
+    lat: 48.29679,
+    lng: -0.91787,
+    radius: 200,
+    icon: "images/radar.png",
+    //expectedTime: "14:45"
+  },
+  {
+    name: "Radar 80",
+    lat: 48.32754,
+    lng: -1.10005,
+    radius: 120,
+    icon: "images/Radar80.png",
+    //expectedTime: "15:00"
+  },
+  {
+    name: "Bifurcation",
+    lat: 48.21999,
+    lng: -1.09198,
+    radius: 120,
+    icon: "images/gauche.png",
+    expectedTime: "19:30"
+  }
+];
+
+let watchId = null;
+let lastZone = null;
+
+/* ============================
+   CALCUL AVANCE / RETARD
+   ============================ */
+
+function getTimingStatus(expectedTime) {
+  const now = new Date();
+  const [h, m] = expectedTime.split(":").map(Number);
+
+  const expected = new Date();
+  expected.setHours(h, m, 0, 0);
+
+  const diffMs = now - expected;
+  const diffMin = Math.round(diffMs / 60000);
+
+  if (diffMin < 0) return { status: "en avance", minutes: Math.abs(diffMin) };
+  if (diffMin > 0) return { status: "en retard", minutes: diffMin };
+  return { status: "à l'heure", minutes: 0 };
+}
+
+/* ============================
+   DISTANCE HAVERSINE
+   ============================ */
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/* ============================
+   MODE NUIT
+   ============================ */
+
+function toggleNightMode() {
+  document.body.classList.toggle("night");
+}
+
+/* ============================
+   TRACKING GPS
+   ============================ */
+
+function startTracking() {
+  const status = document.getElementById("status");
+  const icon = document.getElementById("icon");
+  const distanceBox = document.getElementById("distance");
+  const speedDisplay = document.getElementById("speed");
+  const timingDisplay = document.getElementById("timing");
+
+  if (!navigator.geolocation) {
+    status.textContent = "La géolocalisation n'est pas supportée.";
+    status.className = "ko";
+    return;
+  }
+
+  status.textContent = "Géolocalisation en cours...";
+  status.className = "";
+
+  watchId = navigator.geolocation.watchPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      /* --- VITESSE GPS --- */
+      const speed = pos.coords.speed;
+      if (speed === null) {
+        speedDisplay.textContent = "-- km/h";
+      } else {
+        const kmh = (speed * 3.6).toFixed(0);
+        speedDisplay.textContent = kmh + " km/h";
+
+        // Couleur style GPS
+        if (kmh < 30) speedDisplay.style.color = "#0a7a0a";
+        else if (kmh < 70) speedDisplay.style.color = "#e6a800";
+        else speedDisplay.style.color = "#a30000";
+      }
+
+      let insideZone = null;
+      let closestZone = null;
+      let minDist = Infinity;
+
+      for (const z of zones) {
+        const d = distanceMeters(lat, lng, z.lat, z.lng);
+
+        if (d < minDist) {
+          minDist = d;
+          closestZone = z;
+        }
+
+        if (d <= z.radius) insideZone = z;
+      }
+
+      distanceBox.textContent =
+        `Distance à la zone la plus proche (${closestZone.name}) : ${Math.round(minDist)} m`;
+
+      /* --- DANS UNE ZONE --- */
+      if (insideZone) {
+        status.textContent = `Vous êtes dans ${insideZone.name}`;
+        status.className = "ok";
+        icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
+
+        // Avance / retard
+        if (insideZone.expectedTime) {
+          const timing = getTimingStatus(insideZone.expectedTime);
+
+          if (timing.status === "en avance") {
+            timingDisplay.textContent = `En avance de ${timing.minutes} min`;
+            timingDisplay.style.color = "green";
+          } else if (timing.status === "en retard") {
+            timingDisplay.textContent = `En retard de ${timing.minutes} min`;
+            timingDisplay.style.color = "red";
+          } else {
+            timingDisplay.textContent = "À l'heure";
+            timingDisplay.style.color = "orange";
+          }
+        }
+
+        if (lastZone !== insideZone.name) {
+          document.getElementById("alertSound").play();
+          lastZone = insideZone.name;
+        }
+
+      } else {
+        status.textContent = "Vous êtes hors zone";
+        status.className = "ko";
+        icon.innerHTML = `<img src="images/none.png" alt="Aucun point">`;
+        timingDisplay.textContent = "Statut horaire : --";
+        timingDisplay.style.color = "white";
+        lastZone = null;
+      }
+    },
+    (err) => {
+      status.textContent = "Erreur : " + err.message;
+      status.className = "ko";
+    },
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+  );
+}
+
+/* ============================
+   STOP
+   ============================ */
+
+function stopTracking() {
+  const status = document.getElementById("status");
+
+  if (watchId !== null) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    status.textContent = "Géolocalisation arrêtée.";
+    status.className = "ko";
+  }
+}
+</script>
+
+</body>
+</html>
