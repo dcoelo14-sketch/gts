@@ -351,7 +351,7 @@ function toggleNightMode() {
 /* ============================
    TRACKING GPS
    ============================ */
-
+keepScreenAwake()
 function startTracking() {
   const status = document.getElementById("status");
   const icon = document.getElementById("icon");
@@ -367,7 +367,7 @@ function startTracking() {
 
   status.textContent = "Géolocalisation en cours...";
   status.className = "";
-	//keepScreenAwake();
+	
 
 
   watchId = navigator.geolocation.watchPosition(
@@ -521,6 +521,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
