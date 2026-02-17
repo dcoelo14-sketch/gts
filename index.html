@@ -137,6 +137,7 @@ const zones = [
       Ouest: "images/f50.png"
     }
   },
+
   {
     type: "circle",
     name: "Radar 50",
@@ -150,6 +151,7 @@ const zones = [
       Ouest: "images/radar50.png"
     }
   },
+
   {
     type: "circle",
     name: "Radar 80",
@@ -163,6 +165,7 @@ const zones = [
       Ouest: "images/radar80.png"
     }
   },
+
   {
     type: "circle",
     name: "Bifurcation",
@@ -177,6 +180,7 @@ const zones = [
       Ouest: "images/droite.png"
     }
   },
+
   {
     type: "circle",
     name: "Rond Point Belle Epoque",
@@ -191,6 +195,7 @@ const zones = [
       Ouest: "images/rond.png"
     }
   },
+
   {
     type: "circle",
     name: "Juvigné",
@@ -205,9 +210,10 @@ const zones = [
       Ouest: "images/f50.png"
     }
   },
+
   {
     type: "circle",
-    name: "Princé",
+    name: "Princé 1",
     lat: 48.21536,
     lng: -1.08545,
     radius: 120,
@@ -218,10 +224,11 @@ const zones = [
       Est:   "images/50.png",
       Ouest: "images/f50.png"
     }
-  }
+  },
+
   {
     type: "circle",
-    name: "Princé",
+    name: "Princé 2",
     lat: 48.21865,
     lng: -1.09058,
     radius: 120,
@@ -232,34 +239,35 @@ const zones = [
       Est:   "images/f50.png",
       Ouest: "images/50.png"
     }
-  }
+  },
+
   {
     type: "polygon",
     name: "Route",
-	points: [
-    {lat: 48.29255, lng: -0.94356},
-    {lat: 48.29247, lng: -0.94518},
-	{lat: 48.23323, lng: -1.02971},
-    {lat: 48.23316, lng: -1.02960}
-	]
-    //expectedTime: "19:25",
+    points: [
+      {lat: 48.29255, lng: -0.94356},
+      {lat: 48.29247, lng: -0.94518},
+      {lat: 48.23323, lng: -1.02971},
+      {lat: 48.23316, lng: -1.02960}
+    ],
     directionIcons: {
       Nord:  "images/90.png",
       Sud:   "images/90.png",
       Est:   "images/90.png",
       Ouest: "images/90.png"
     }
-  }
+  },
+
   {
     type: "polygon",
     name: "La Croixille",
-	points: [
-    {lat: 48.20700, lng: -1.05334, Nord: "images/50", Sud:"images/f50"},
-    {lat: 48.20562, lng: -1.05217, Est: "images/50", Ouest:"images/f50"},
-	{lat: 48.20321, lng: -1.05304, Nord: "images/f50", Sud:"images/50"},
-    {lat: 48.20331, lng: -1.06139, Ouest: "images/50", Est: "images/f50"},
-	{lat: 48.20638, lng: -1.06146, Ouest: "images/50", Est: "images/f50"}
-    ]
+    points: [
+      {lat: 48.20700, lng: -1.05334},
+      {lat: 48.20562, lng: -1.05217},
+      {lat: 48.20321, lng: -1.05304},
+      {lat: 48.20331, lng: -1.06139},
+      {lat: 48.20638, lng: -1.06146}
+    ],
     directionIcons: {
       Nord:  "images/90.png",
       Sud:   "images/90.png",
@@ -268,6 +276,7 @@ const zones = [
     }
   }
 ];
+
 
 let watchId = null;
 let lastZone = null;
@@ -491,4 +500,5 @@ function stopTracking() {
 
 </body>
 </html>
+
 
