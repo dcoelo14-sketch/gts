@@ -119,6 +119,7 @@
 
 const zones = [
   {
+    type: "circle",
     name: "Sortie",
     lat: 48.29315,
     lng: -0.94432,
@@ -127,22 +128,25 @@ const zones = [
     expectedTime: "19:14"
   },
   {
+    type: "circle",
     name: "Radar 50",
     lat: 48.29679,
     lng: -0.91787,
     radius: 200,
-    icon: "images/radar.png",
+    icon: "images/radar.png"
     //expectedTime: "14:45"
   },
   {
+    type: "circle",
     name: "Radar 80",
     lat: 48.32754,
     lng: -1.10005,
     radius: 200,
-    icon: "images/Radar80.png",
+    icon: "images/Radar80.png"
     //expectedTime: "15:00"
   },
   {
+    type: "circle",
     name: "Bifurcation",
     lat: 48.21999,
     lng: -1.09198,
@@ -151,14 +155,16 @@ const zones = [
     expectedTime: "19:30"
   }
   {
+    type: "circle",
     name: "Rond Point Belle Epoque",
-      lat: 48.29768,
-      lng: -0.93474,
-      radius: 100,
-      icon: "images/rond.png"
-  expectedTime: "19:12"
+    lat: 48.29768,
+    lng: -0.93474,
+    radius: 100,
+    icon: "images/rond.png",
+    expectedTime: "19:12"
   }
   {
+    type: "circle",
     name: "Juvigné",
     lat: 48.23222,
     lng: -1.03108,
@@ -167,6 +173,7 @@ const zones = [
     expectedTime: "19:20"
   }
   {
+    type: "circle",
     name: "La Croixille",
     lat: 48.20631,
     lng: -1.05384,
@@ -341,4 +348,5 @@ function stopTracking() {
 
 </body>
 </html>
+
 
