@@ -125,7 +125,13 @@ const zones = [
     lng: -0.94432,
     radius: 150,
     icon: "images/f50.png",
-    expectedTime: "19:14"
+    expectedTime: "19:14",
+    directionIcons: {
+      Nord:  "images/f50.png",
+      Sud:   "images/50.png",
+      Est:   "images/f50.png",
+      Ouest: "images/f50.png"
+    }
   },
   {
     type: "circle",
@@ -133,8 +139,13 @@ const zones = [
     lat: 48.29679,
     lng: -0.91787,
     radius: 200,
-    icon: "images/radar.png"
-    //expectedTime: "14:45"
+    icon: "images/radar.png",
+    directionIcons: {
+      Nord:  "images/radar50.png",
+      Sud:   "images/radar50.png",
+      Est:   "images/radar50.png",
+      Ouest: "images/radar50.png"
+    }
   },
   {
     type: "circle",
@@ -142,8 +153,13 @@ const zones = [
     lat: 48.32754,
     lng: -1.10005,
     radius: 200,
-    icon: "images/Radar80.png"
-    //expectedTime: "15:00"
+    icon: "images/Radar80.png",
+    directionIcons: {
+      Nord:  "images/radar80.png",
+      Sud:   "images/radar80.png",
+      Est:   "images/radar80.png",
+      Ouest: "images/radar80.png"
+    }
   },
   {
     type: "circle",
@@ -152,8 +168,14 @@ const zones = [
     lng: -1.09198,
     radius: 120,
     icon: "images/gauche.png",
-    expectedTime: "19:30"
-  }
+    expectedTime: "19:30",
+    directionIcons: {
+      Nord:  "images/gauche.png",
+      Sud:   "images/droite.png",
+      Est:   "images/gauche.png",
+      Ouest: "images/droite.png"
+    }
+  },
   {
     type: "circle",
     name: "Rond Point Belle Epoque",
@@ -161,8 +183,14 @@ const zones = [
     lng: -0.93474,
     radius: 100,
     icon: "images/rond.png",
-    expectedTime: "19:12"
-  }
+    expectedTime: "19:12",
+    directionIcons: {
+      Nord:  "images/rond.png",
+      Sud:   "images/rond.png",
+      Est:   "images/rond.png",
+      Ouest: "images/rond.png"
+    }
+  },
   {
     type: "circle",
     name: "Juvigné",
@@ -170,21 +198,34 @@ const zones = [
     lng: -1.03108,
     radius: 120,
     icon: "images/50.png",
-    expectedTime: "19:20"
-  }
+    expectedTime: "19:20",
+    directionIcons: {
+      Nord:  "images/50.png",
+      Sud:   "images/f50.png",
+      Est:   "images/50.png",
+      Ouest: "images/f50.png"
+    }
+  },
   {
     type: "circle",
     name: "La Croixille",
     lat: 48.20631,
-    lng: -1.05384,
+    lng: -1.05394,
     radius: 120,
     icon: "images/50.png",
-    expectedTime: "19:25"
+    expectedTime: "19:25",
+    directionIcons: {
+      Nord:  "images/50.png",
+      Sud:   "images/f50.png",
+      Est:   "images/50.png",
+      Ouest: "images/50.png"
+    }
   }
 ];
 
 let watchId = null;
 let lastZone = null;
+let lastPos = null;
 
 /* ============================
    CALCUL AVANCE / RETARD
@@ -222,6 +263,29 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 /* ============================
+   BEARING (DIRECTION)
+   ============================ */
+
+function bearing(lat1, lon1, lat2, lon2) {
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  lat1 *= Math.PI / 180;
+  lat2 *= Math.PI / 180;
+
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function bearingToText(b) {
+  if (b >= 45 && b < 135) return "Est";
+  if (b >= 135 && b < 225) return "Sud";
+  if (b >= 225 && b < 315) return "Ouest";
+  return "Nord";
+}
+
+/* ============================
    MODE NUIT
    ============================ */
 
@@ -255,19 +319,28 @@ function startTracking() {
       const lng = pos.coords.longitude;
 
       /* --- VITESSE GPS --- */
+	  let lastSpeed = 0;
+
+function smoothSpeed(s) {
+  if (s === null) return lastSpeed;
+  lastSpeed = lastSpeed * 0.6 + s * 0.4;
+  return lastSpeed;
+}
+
+	  
       const speed = pos.coords.speed;
       if (speed === null) {
         speedDisplay.textContent = "-- km/h";
       } else {
-        const kmh = (speed * 3.6).toFixed(0);
+        const kmh = (smoothSpeed(speed) * 3.6).toFixed(0);
         speedDisplay.textContent = kmh + " km/h";
 
-        // Couleur style GPS
         if (kmh < 30) speedDisplay.style.color = "#0a7a0a";
         else if (kmh < 70) speedDisplay.style.color = "#e6a800";
         else speedDisplay.style.color = "#a30000";
       }
 
+      /* --- DÉTECTION ZONES --- */
       let insideZone = null;
       let closestZone = null;
       let minDist = Infinity;
@@ -288,11 +361,30 @@ function startTracking() {
 
       /* --- DANS UNE ZONE --- */
       if (insideZone) {
-        status.textContent = `Vous êtes dans ${insideZone.name}`;
-        status.className = "ok";
-        icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
 
-        // Avance / retard
+        /* DÉTECTION DU SENS D’ARRIVÉE */
+        if (lastZone !== insideZone.name && lastPos) {
+
+          const b = bearing(lastPos.lat, lastPos.lng, lat, lng);
+          const dir = bearingToText(b);
+
+          status.textContent = `Arrivée dans ${insideZone.name} depuis le ${dir}`;
+          status.className = "ok";
+
+          /* Image spécifique à la zone + direction */
+          if (insideZone.directionIcons && insideZone.directionIcons[dir]) {
+            icon.innerHTML = `<img src="${insideZone.directionIcons[dir]}" alt="${dir}">`;
+          } else {
+            icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
+          }
+
+        } else {
+          status.textContent = `Vous êtes dans ${insideZone.name}`;
+          status.className = "ok";
+          icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
+        }
+
+        /* Avance / retard */
         if (insideZone.expectedTime) {
           const timing = getTimingStatus(insideZone.expectedTime);
 
@@ -321,12 +413,14 @@ function startTracking() {
         timingDisplay.style.color = "white";
         lastZone = null;
       }
+
+      lastPos = { lat, lng };
     },
     (err) => {
       status.textContent = "Erreur : " + err.message;
       status.className = "ko";
     },
-    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+    { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
   );
 }
 
@@ -348,5 +442,3 @@ function stopTracking() {
 
 </body>
 </html>
-
-
