@@ -367,6 +367,8 @@ function startTracking() {
 
   status.textContent = "Géolocalisation en cours...";
   status.className = "";
+	keepScreenAwake();
+
 
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
@@ -375,6 +377,25 @@ function startTracking() {
 
       /* --- VITESSE GPS --- */
 	  let lastSpeed = 0;
+
+		let wakeLock = null;
+
+async function keepScreenAwake() {
+  try {
+    if ("wakeLock" in navigator) {
+      wakeLock = await navigator.wakeLock.request("screen");
+      console.log("Wake Lock activé");
+
+      wakeLock.addEventListener("release", () => {
+        console.log("Wake Lock relâché");
+      });
+    } else {
+      console.log("Wake Lock non supporté");
+    }
+  } catch (err) {
+    console.error(`Wake Lock erreur : ${err.name}, ${err.message}`);
+  }
+}
 
 function smoothSpeed(s) {
   if (s === null) return lastSpeed;
@@ -500,5 +521,6 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
