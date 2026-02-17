@@ -481,7 +481,7 @@ function smoothSpeed(s) {
       status.textContent = "Erreur : " + err.message;
       status.className = "ko";
     },
-    { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+    { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
   );
 }
 
@@ -506,6 +506,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
