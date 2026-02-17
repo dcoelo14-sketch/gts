@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>GPS Zones – Temps réel</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -94,6 +96,12 @@
     }
   </style>
 </head>
+	<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
 <body>
 
 <div class="container">
@@ -120,11 +128,10 @@
 const zones = [
   {
     type: "circle",
-    name: "Sortie",
+    name: "Route de Vitré",
     lat: 48.29315,
     lng: -0.94432,
     radius: 150,
-    icon: "images/f50.png",
     expectedTime: "19:14",
     directionIcons: {
       Nord:  "images/f50.png",
@@ -139,7 +146,6 @@ const zones = [
     lat: 48.29679,
     lng: -0.91787,
     radius: 200,
-    icon: "images/radar.png",
     directionIcons: {
       Nord:  "images/radar50.png",
       Sud:   "images/radar50.png",
@@ -153,7 +159,6 @@ const zones = [
     lat: 48.32754,
     lng: -1.10005,
     radius: 200,
-    icon: "images/Radar80.png",
     directionIcons: {
       Nord:  "images/radar80.png",
       Sud:   "images/radar80.png",
@@ -164,14 +169,13 @@ const zones = [
   {
     type: "circle",
     name: "Bifurcation",
-    lat: 48.21999,
-    lng: -1.09198,
+    lat: 48.22067,
+    lng: -1.09273,
     radius: 120,
-    icon: "images/gauche.png",
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/gauche.png",
-      Sud:   "images/droite.png",
+      Nord:  "images/droite.png",
+      Sud:   "images/gauche.png",
       Est:   "images/gauche.png",
       Ouest: "images/droite.png"
     }
@@ -182,7 +186,6 @@ const zones = [
     lat: 48.29768,
     lng: -0.93474,
     radius: 100,
-    icon: "images/rond.png",
     expectedTime: "19:12",
     directionIcons: {
       Nord:  "images/rond.png",
@@ -197,7 +200,6 @@ const zones = [
     lat: 48.23222,
     lng: -1.03108,
     radius: 120,
-    icon: "images/50.png",
     expectedTime: "19:20",
     directionIcons: {
       Nord:  "images/50.png",
@@ -208,17 +210,64 @@ const zones = [
   },
   {
     type: "circle",
-    name: "La Croixille",
-    lat: 48.20631,
-    lng: -1.05394,
+    name: "Princé",
+    lat: 48.21536,
+    lng: -1.08545,
     radius: 120,
-    icon: "images/50.png",
-    expectedTime: "19:25",
+    expectedTime: "19:30",
+    directionIcons: {
+      Nord:  "images/f50.png",
+      Sud:   "images/50.png",
+      Est:   "images/50.png",
+      Ouest: "images/f50.png"
+    }
+  }
+  {
+    type: "circle",
+    name: "Princé",
+    lat: 48.21865,
+    lng: -1.09058,
+    radius: 120,
+    expectedTime: "19:30",
     directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/f50.png",
-      Est:   "images/50.png",
+      Est:   "images/f50.png",
       Ouest: "images/50.png"
+    }
+  }
+  {
+    type: "polygon",
+    name: "Route",
+	points: [
+    {lat: 48.29255, lng: -0.94356},
+    {lat: 48.29247, lng: -0.94518},
+	{lat: 48.23323, lng: -1.02971},
+    {lat: 48.23316, lng: -1.02960}
+	]
+    //expectedTime: "19:25",
+    directionIcons: {
+      Nord:  "images/90.png",
+      Sud:   "images/90.png",
+      Est:   "images/90.png",
+      Ouest: "images/90.png"
+    }
+  }
+  {
+    type: "polygon",
+    name: "La Croixille",
+	points: [
+    {lat: 48.20700, lng: -1.05334, Nord: "images/50", Sud:"images/f50"},
+    {lat: 48.20562, lng: -1.05217, Est: "images/50", Ouest:"images/f50"},
+	{lat: 48.20321, lng: -1.05304, Nord: "images/f50", Sud:"images/50"},
+    {lat: 48.20331, lng: -1.06139, Ouest: "images/50", Est: "images/f50"},
+	{lat: 48.20638, lng: -1.06146, Ouest: "images/50", Est: "images/f50"}
+    ]
+    directionIcons: {
+      Nord:  "images/90.png",
+      Sud:   "images/90.png",
+      Est:   "images/90.png",
+      Ouest: "images/90.png"
     }
   }
 ];
