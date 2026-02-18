@@ -250,6 +250,7 @@ const zones = [
       {lat: 48.23323, lng: -1.02971},
       {lat: 48.23316, lng: -1.02960}
     ],
+	  icon:" Aucun point.png",
     directionIcons: {
       Nord:  "images/90.png",
       Sud:   "images/90.png",
@@ -374,8 +375,8 @@ function startTracking() {
 
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const lat = 48.24251 /*pos.coords.latitude;*/
-      const lng = -1.01655/*pos.coords.longitude;*/
+      const lat = 48.29097 /*pos.coords.latitude;*/
+      const lng = -0.94750/*pos.coords.longitude;*/
 
       /* --- VITESSE GPS --- */
 	 
@@ -553,6 +554,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
