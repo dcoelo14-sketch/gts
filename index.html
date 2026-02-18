@@ -219,10 +219,10 @@ const zones = [
     radius: 120,
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/f50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/f50.png"
+      Nord:  "images/50.png",
+      Sud:   "images/f50.png",
+      Est:   "images/f50.png",
+      Ouest: "images/50.png"
     }
   },
 
@@ -396,8 +396,8 @@ function smoothSpeed(s) {
         const kmh = (smoothSpeed(speed) * 3.6).toFixed(0);
         speedDisplay.textContent = kmh + " km/h";
 
-        if (kmh < 30) speedDisplay.style.color = "#0a7a0a";
-        else if (kmh < 70) speedDisplay.style.color = "#e6a800";
+        if (kmh < 50) speedDisplay.style.color = "#0a7a0a";
+        else if (kmh < 80) speedDisplay.style.color = "#e6a800";
         else speedDisplay.style.color = "#a30000";
       }
 
@@ -424,26 +424,35 @@ function smoothSpeed(s) {
       if (insideZone) {
 
         /* DÉTECTION DU SENS D’ARRIVÉE */
-        if (lastZone !== insideZone.name && lastPos) {
+      let arrivalTimeout;
 
-          const b = bearing(lastPos.lat, lastPos.lng, lat, lng);
-          const dir = bearingToText(b);
+if (lastZone !== insideZone.name && lastPos) {
 
-          status.textContent = `Arrivée dans ${insideZone.name} depuis le ${dir}`;
-          status.className = "ok";
+  const b = bearing(lastPos.lat, lastPos.lng, lat, lng);
+  const dir = bearingToText(b);
 
-          /* Image spécifique à la zone + direction */
-          if (insideZone.directionIcons && insideZone.directionIcons[dir]) {
-            icon.innerHTML = `<img src="${insideZone.directionIcons[dir]}" alt="${dir}">`;
-          } else {
-            icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
-          }
+  status.textContent = `Arrivée dans ${insideZone.name} depuis le ${dir}`;
+  status.className = "ok";
 
-        } else {
-          status.textContent = `Vous êtes dans ${insideZone.name}`;
-          status.className = "ok";
-          icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
-        }
+  const iconSrc = insideZone.directionIcons?.[dir] || insideZone.icon;
+  icon.innerHTML = `<img src="${iconSrc}" alt="${dir || insideZone.name}">`;
+
+  // Empêche le else de réécrire trop vite
+  clearTimeout(arrivalTimeout);
+  arrivalTimeout = setTimeout(() => {
+    lastZone = insideZone.name;
+  }, 2000); // 2 secondes avant de considérer la zone comme "stable"
+
+} else {
+
+  // On n'affiche le message "Vous êtes dans..." que si la zone est stabilisée
+  if (lastZone === insideZone.name) {
+    status.textContent = `Vous êtes dans ${insideZone.name}`;
+    status.className = "ok";
+    icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
+  }
+}
+
 
         /* Avance / retard */
         if (insideZone.expectedTime) {
@@ -506,6 +515,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
