@@ -174,10 +174,10 @@ const zones = [
     radius: 120,
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/droite.png",
-      Sud:   "images/gauche.png",
-      Est:   "images/gauche.png",
-      Ouest: "images/droite.png"
+      Nord:  "images/gauche.png",
+      Sud:   "images/droite.png",
+      Est:   "images/droite.png",
+      Ouest: "images/gauche.png"
     }
   },
 
@@ -234,10 +234,10 @@ const zones = [
     radius: 120,
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/f50.png",
-      Est:   "images/f50.png",
-      Ouest: "images/50.png"
+      Nord:  "images/f50.png",
+      Sud:   "images/50.png",
+      Est:   "images/50.png",
+      Ouest: "images/f50.png"
     }
   },
 
@@ -481,7 +481,7 @@ function smoothSpeed(s) {
       status.textContent = "Erreur : " + err.message;
       status.className = "ko";
     },
-    { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
+    { enableHighAccuracy: true, maximumAge: 100, timeout: 1000 }
   );
 }
 
@@ -506,6 +506,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
