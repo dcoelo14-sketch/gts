@@ -384,8 +384,8 @@ function startTracking() {
 
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const lat = 48.29097 /*pos.coords.latitude;*/
-      const lng = -0.94750/*pos.coords.longitude;*/
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
 
       /* --- VITESSE GPS --- */
 	 
@@ -563,6 +563,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
