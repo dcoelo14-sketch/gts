@@ -60,6 +60,10 @@
       margin-top: 20px;
       color: #222;
     }
+	  #distance {
+	  font-weight: bold;
+      font-size: 28px;
+	  }
 
     body.night #speed {
       color: #fff;
@@ -111,7 +115,7 @@
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
-  <div id="timing">Statut horaire : --</div>
+  <div id="timing"><span>Statut horaire : --</span></div>
   <div id="icon" class="icon"></div>
 
   <audio id="alertSound" src="sounds/alert.mp3" preload="auto"></audio>
@@ -555,6 +559,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
