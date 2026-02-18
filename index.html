@@ -402,20 +402,57 @@ function smoothSpeed(s) {
       }
 
       /* --- DÉTECTION ZONES --- */
-      let insideZone = null;
-      let closestZone = null;
-      let minDist = Infinity;
+    let insideZone = null;
+let closestZone = null;
+let minDist = Infinity;
 
-      for (const z of zones) {
-        const d = distanceMeters(lat, lng, z.lat, z.lng);
+for (const z of zones) {
 
-        if (d < minDist) {
-          minDist = d;
-          closestZone = z;
-        }
+  if (z.type === "circle") {
 
-        if (d <= z.radius) insideZone = z;
-      }
+    const d = distanceMeters(lat, lng, z.lat, z.lng);
+
+    if (d < minDist) {
+      minDist = d;
+      closestZone = z;
+    }
+
+    if (d <= z.radius) {
+      insideZone = z;
+    }
+
+  } else if (z.type === "polygon") {
+
+    // Distance approximative au premier point pour closestZone
+    const d = distanceMeters(lat, lng, z.points[0].lat, z.points[0].lng);
+
+    if (d < minDist) {
+      minDist = d;
+      closestZone = z;
+    }
+
+    if (isPointInPolygon(lat, lng, z.points)) {
+      insideZone = z;
+    }
+  }
+}
+
+function isPointInPolygon(lat, lng, polygon) {
+  let inside = false;
+
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].lat, yi = polygon[i].lng;
+    const xj = polygon[j].lat, yj = polygon[j].lng;
+
+    const intersect =
+      ((yi > lng) !== (yj > lng)) &&
+      (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
+}
 
       distanceBox.textContent =
         `Distance à la zone la plus proche (${closestZone.name}) : ${Math.round(minDist)} m`;
@@ -515,6 +552,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
