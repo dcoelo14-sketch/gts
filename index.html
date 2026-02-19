@@ -149,8 +149,7 @@ const zones = [
     lat: 48.29679,
     lng: -0.91787,
     radius: 200,
-	  icon: "images/radar50.png",
-    directionIcons: {
+	  directionIcons: {
       Nord:  "images/radar50.png",
       Sud:   "images/radar50.png",
       Est:   "images/radar50.png",
@@ -164,8 +163,7 @@ const zones = [
     lat: 48.32754,
     lng: -1.10005,
     radius: 200,
-	  icon: "images/radar80.png",
-    directionIcons: {
+	 directionIcons: {
       Nord:  "images/radar80.png",
       Sud:   "images/radar80.png",
       Est:   "images/radar80.png",
@@ -191,12 +189,11 @@ const zones = [
   {
     type: "circle",
     name: "Rond Point Belle Epoque",
-    lat: 48.29768,
-    lng: -0.93474,
-    radius: 100,
+    lat: 48.29677,
+    lng: -0.93473,
+    radius: 150,
     expectedTime: "19:12",
-	  icon: "images/rond.png",
-    directionIcons: {
+	directionIcons: {
       Nord:  "images/rond.png",
       Sud:   "images/rond.png",
       Est:   "images/rond.png",
@@ -211,8 +208,7 @@ const zones = [
     lng: -1.03108,
     radius: 120,
     expectedTime: "19:20",
-	  icon: "images/50.png",
-    directionIcons: {
+	directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/f50.png",
       Est:   "images/50.png",
@@ -227,12 +223,11 @@ const zones = [
     lng: -1.08545,
     radius: 120,
     expectedTime: "19:30",
-	  icon: "images/50.png",
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/f50.png",
-      Est:   "images/f50.png",
-      Ouest: "images/50.png"
+	directionIcons: {
+      Nord:  "images/f50.png",
+      Sud:   "images/50.png",
+      Est:   "images/50.png",
+      Ouest: "images/f50.png"
     }
   },
 
@@ -244,10 +239,10 @@ const zones = [
     radius: 120,
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/f50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/f50.png"
+      Nord:  "images/50.png",
+      Sud:   "images/f50.png",
+      Est:   "images/f50.png",
+      Ouest: "images/50.png"
     }
   },
 
@@ -259,15 +254,23 @@ const zones = [
   { lat: 48.29274, lng: -0.94525 },
   { lat: 48.23349, lng: -1.02978 },
   { lat: 48.23342, lng: -1.02967 },
-
-  { lat: 48.29316, lng: -0.94537 },
-  { lat: 48.29220, lng: -0.94511 },
-  { lat: 48.23297, lng: -1.02964 },
-  { lat: 48.23290, lng: -1.02953 }
 ],
 	  icon:" images/80.png",
      },
-
+  {
+    type: "circle",
+    name: "Chatillon",
+    lat: 48.22546,
+    lng: -1.17163,
+    radius: 120,
+    expectedTime: "19:35",
+	directionIcons: {
+      Nord:  "images/f50.png",
+      Sud:   "images/f50.png",
+      Est:   "images/50.png",
+      Ouest: "images/f50.png"
+    }
+  },
   {
     type: "polygon",
     name: "La Croixille",
@@ -278,8 +281,8 @@ const zones = [
       {lat: 48.20331, lng: -1.06139},
       {lat: 48.20638, lng: -1.06146}
     ],
-	  icon: "images/50.png",
-    directionIcons: {
+	  icon: "images/priorite.png",
+	  directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/50.png",
       Est:   "images/50.png",
@@ -538,7 +541,7 @@ if (lastZone !== insideZone.name && lastPos) {
       status.textContent = "Erreur : " + err.message;
       status.className = "ko";
     },
-    { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
+    { enableHighAccuracy: true, maximumAge: 800, timeout: 5000 }
   );
 }
 
@@ -563,6 +566,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
