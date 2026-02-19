@@ -111,7 +111,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1  coelod 2026
+  version 0.1.1  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -135,6 +135,7 @@ const zones = [
     lng: -0.94432,
     radius: 150,
     expectedTime: "19:14",
+	  icon: "images/panneau_ernée.png",
     directionIcons: {
       Nord:  "images/f50.png",
       Sud:   "images/50.png",
@@ -209,19 +210,19 @@ const zones = [
     radius: 120,
     expectedTime: "19:20",
 	directionIcons: {
-      Nord:  "images/50.png",
+      Nord:  "images/panneau_juvigné.png",
       Sud:   "images/f50.png",
-      Est:   "images/50.png",
+      Est:   "images/panneau_juvigné.png",
       Ouest: "images/f50.png"
     }
   },
 
   {
     type: "circle",
-    name: "Princé 1",
+    name: "panneau_princé",
     lat: 48.21536,
     lng: -1.08545,
-    radius: 120,
+    radius: 200,
     expectedTime: "19:30",
 	directionIcons: {
       Nord:  "images/f50.png",
@@ -238,6 +239,7 @@ const zones = [
     lng: -1.09058,
     radius: 120,
     expectedTime: "19:30",
+	  icon: "panneau_princé",
     directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/f50.png",
@@ -566,6 +568,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
