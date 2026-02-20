@@ -111,7 +111,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.31  coelod 2026
+  version 0.1.32  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -130,18 +130,19 @@
 const zones = [
   {
     type: "circle",
-    name: "Route de Vitré",
+    name: "Sortie 1 Ernée",
+	icon: "images/panneau_ernée.png",
     lat: 48.29315,
     lng: -0.94432,
     radius: 150,
     expectedTime: "19:14",
-	  icon: "images/panneau_ernée.png",
-    directionIcons: {
+	directionIcons: {
       Nord:  "images/f50.png",
       Sud:   "images/50.png",
       Est:   "images/f50.png",
       Ouest: "images/f50.png"
-    }
+	}
+	  
   },
 
   {
@@ -150,13 +151,8 @@ const zones = [
     lat: 48.29679,
     lng: -0.91787,
     radius: 200,
-	  directionIcons: {
-      Nord:  "images/radar50.png",
-      Sud:   "images/radar50.png",
-      Est:   "images/radar50.png",
-      Ouest: "images/radar50.png"
-    }
-  },
+    icon: "images/radar50.png"
+    },
 
   {
     type: "circle",
@@ -164,13 +160,8 @@ const zones = [
     lat: 48.32754,
     lng: -1.10005,
     radius: 200,
-	 directionIcons: {
-      Nord:  "images/radar80.png",
-      Sud:   "images/radar80.png",
-      Est:   "images/radar80.png",
-      Ouest: "images/radar80.png"
-    }
-  },
+    icon: "images/radar80.png"
+      },
 {
     type: "circle",
     name: "pietons",
@@ -196,17 +187,12 @@ const zones = [
   {
     type: "circle",
     name: "Rond Point Belle Epoque",
+	icon: "images/rond.png",
     lat: 48.29677,
     lng: -0.93473,
     radius: 150,
-    expectedTime: "19:12",
-	directionIcons: {
-      Nord:  "images/rond.png",
-      Sud:   "images/rond.png",
-      Est:   "images/rond.png",
-      Ouest: "images/30.png"
-    }
-  },
+    expectedTime: "19:12"
+	 },
 
   {
     type: "circle",
@@ -225,7 +211,8 @@ const zones = [
 
   {
     type: "circle",
-    name: "panneau_princé",
+    name: "princé 1",
+	icon: "panneau_princé",
     lat: 48.21536,
     lng: -1.08545,
     radius: 200,
@@ -245,7 +232,7 @@ const zones = [
     lng: -1.09058,
     radius: 120,
     expectedTime: "19:30",
-	  icon: "panneau_princé",
+	icon: "panneau_princé",
     directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/f50.png",
@@ -256,32 +243,38 @@ const zones = [
 
   {
     type: "polygon",
-    name: "Route",
+    name: "la route de Vitré",
+	icon:" images/80.png",
     points: [
-  { lat: 48.29282, lng: -0.94363 },
   { lat: 48.29274, lng: -0.94525 },
-  { lat: 48.23349, lng: -1.02978 },
-  { lat: 48.23342, lng: -1.02967 },
+  { lat: 48.29282, lng: -0.94363 },
+  { lat: 48.23316, lng: -1.02923 },
+  { lat: 48.23342, lng: -1.02967 }
 ],
-	  icon:" images/80.png",
+	 
      },
   {
-    type: "circle",
+    type: "polygon",
     name: "Chatillon",
-    lat: 48.22546,
-    lng: -1.17163,
-    radius: 120,
+	icon: "Chatillon",
+     points: [
+      {lat: 48.22540, lng: -1.17129},
+      {lat: 48.21943, lng: -1.17107},
+      {lat: 48.22207, lng: -1.18125},
+      {lat: 48.22681, lng: -1.18498}
+    ],
     expectedTime: "19:35",
 	directionIcons: {
-      Nord:  "images/f50.png",
-      Sud:   "images/f50.png",
+      Nord:  "images/50.png",
+      Sud:   "images/50.png",
       Est:   "images/50.png",
-      Ouest: "images/f50.png"
+      Ouest: "images/50.png"
     }
   },
   {
     type: "polygon",
     name: "La Croixille",
+	icon: "images/priorite.png",
     points: [
       {lat: 48.20700, lng: -1.05334},
       {lat: 48.20562, lng: -1.05217},
@@ -289,7 +282,7 @@ const zones = [
       {lat: 48.20331, lng: -1.06139},
       {lat: 48.20638, lng: -1.06146}
     ],
-	  icon: "images/priorite.png",
+	 
 	  directionIcons: {
       Nord:  "images/50.png",
       Sud:   "images/50.png",
@@ -500,13 +493,13 @@ if (lastZone !== insideZone.name && lastPos) {
   clearTimeout(arrivalTimeout);
   arrivalTimeout = setTimeout(() => {
     lastZone = insideZone.name;
-  }, 2000); // 2 secondes avant de considérer la zone comme "stable"
+  }, 5000); // 5 secondes avant de considérer la zone comme "stable"
 
 } else {
 
-  // On n'affiche le message "Vous êtes dans..." que si la zone est stabilisée
+  // On n'affiche le message "Vous êtes sur..." que si la zone est stabilisée
   if (lastZone === insideZone.name) {
-    status.textContent = `Vous êtes dans ${insideZone.name}`;
+    status.textContent = `Vous êtes sur ${insideZone.name}`;
     status.className = "ok";
     icon.innerHTML = `<img src="${insideZone.icon}" alt="${insideZone.name}">`;
   }
@@ -574,6 +567,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
