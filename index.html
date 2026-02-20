@@ -44,22 +44,21 @@
     button:active {
       background: #005fcc;
     }
-    #status {
-    font-family: "Montserrat", sans-serif;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: #fff;
-	}
-
-      #timing {
+    
+#status, #distance, #timing {
       font-size: 18px;
       padding: 12px;
       border-radius: 6px;
       margin-top: 10px;
       font-weight: bold;
     }
-
+	  .dir-text {
+    font-family: "Orbitron", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: yellow;
+}
+      
     #speed {
       font-weight: bold;
       font-size: 48px;
@@ -67,11 +66,7 @@
       margin-top: 20px;
       color: #222;
     }
-	  #distance {
-	  font-weight: bold;
-      font-size: 28px;
-	  }
-
+	  
     body.night #speed {
       color: #fff;
     }
@@ -118,7 +113,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.32  coelod 2026
+  version 0.1.33  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -491,7 +486,8 @@ if (lastZone !== insideZone.name && lastPos) {
   const b = bearing(lastPos.lat, lastPos.lng, lat, lng);
   const dir = bearingToText(b);
 
-  status.textContent = `Arrivée dans ${insideZone.name} depuis le ${dir}`;
+  status.innerHTML = `Arrivée dans ${ insideZone.name } depuis le <span class="dir-text">${ dir }</span>`;
+
   status.className = "ok";
 
   const iconSrc = insideZone.directionIcons?.[dir] || insideZone.icon;
@@ -575,6 +571,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
