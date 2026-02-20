@@ -44,8 +44,15 @@
     button:active {
       background: #005fcc;
     }
+    #status {
+    font-family: "Montserrat", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+	}
 
-    #status, #distance, #timing {
+      #timing {
       font-size: 18px;
       padding: 12px;
       border-radius: 6px;
@@ -165,6 +172,7 @@ const zones = [
 {
     type: "circle",
     name: "pietons",
+	icon: "images/pietons.png",
     lat: 48.29554,
     lng: -0.93159,
     radius: 150
@@ -567,6 +575,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
