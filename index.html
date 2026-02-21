@@ -113,14 +113,14 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.33  coelod 2026
+  version 0.1.34  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
   <div id="timing"><span>Statut horaire : --</span></div>
   <div id="icon" class="icon"></div>
 
-  <audio id="alertSound" src="sounds/alert.mp3" preload="auto"></audio>
+  <audio id="alertSound" src="sounds/alert.wav" preload="auto"></audio>
 
 </div>
 
@@ -180,10 +180,10 @@ const zones = [
     radius: 120,
     expectedTime: "19:30",
     directionIcons: {
-      Nord:  "images/gauche.png",
-      Sud:   "images/droite.png",
-      Est:   "images/droite.png",
-      Ouest: "images/gauche.png"
+      Nord:  "images/droite.png",
+      Sud:   "images/gauche.png",
+      Est:   "images/gauche.png",
+      Ouest: "images/droitee.png"
     }
   },
 
@@ -278,6 +278,7 @@ const zones = [
     type: "polygon",
     name: "La Croixille",
 	icon: "images/priorite.png",
+	  expectedTime: "19:27",
     points: [
       {lat: 48.20700, lng: -1.05334},
       {lat: 48.20562, lng: -1.05217},
@@ -353,10 +354,10 @@ function bearing(lat1, lon1, lat2, lon2) {
 }
 
 function bearingToText(b) {
-  if (b >= 45 && b < 135) return "Est";
-  if (b >= 135 && b < 225) return "Sud";
-  if (b >= 225 && b < 315) return "Ouest";
-  return "Nord";
+  if (b >= 45 && b < 135) return "Ouest";
+  if (b >= 135 && b < 225) return "Nord";
+  if (b >= 225 && b < 315) return "Est";
+  return "Sud";
 }
 
 /* ============================
@@ -546,7 +547,7 @@ if (lastZone !== insideZone.name && lastPos) {
       status.textContent = "Erreur : " + err.message;
       status.className = "ko";
     },
-    { enableHighAccuracy: true, maximumAge: 800, timeout: 5000 }
+    { enableHighAccuracy: true, maximumAge: 400, timeout: 5000 }
   );
 }
 
@@ -571,6 +572,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
