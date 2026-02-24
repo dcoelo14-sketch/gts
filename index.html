@@ -125,6 +125,7 @@
 </div>
 
 <script>
+	const audioPlayer = new Audio();
 /* ============================
    ZONES GPS
    ============================ */
@@ -241,7 +242,12 @@ const zones = [
     lat: 48.22305,
     lng: -1.03856,
     radius: 200,
-	icon: "images/droite.png"
+	directionIcons: {
+      Nord:  "images/gauche.png",
+      Sud:   "images/droite.png",
+      Est:   "images/gauch.png",
+      Ouest: "images/droite.png"
+	}
 	},
   {
     type: "circle",
@@ -256,6 +262,7 @@ const zones = [
     type: "circle",
     name: "pietons",
 	icon: "images/pietons.png",
+	sound: "sounds/alert.wav",
     lat: 48.29554,
     lng: -0.93159,
     radius: 150
@@ -302,35 +309,21 @@ const zones = [
 
   {
     type: "circle",
-    name: "princé 1",
+    name: "princé",
 	icon: "panneau_princé",
-    lat: 48.21536,
-    lng: -1.08545,
+    lat: 48.21709,
+    lng: -1.08863,
     radius: 200,
     expectedTime: "19:30",
 	directionIcons: {
-      Nord:  "images/f50.png",
+      Nord:  "images/50.png",
       Sud:   "images/50.png",
       Est:   "images/50.png",
-      Ouest: "images/f50.png"
-    }
-  },
-
-  {
-    type: "circle",
-    name: "Princé 2",
-    lat: 48.21865,
-    lng: -1.09058,
-    radius: 120,
-    expectedTime: "19:30",
-	icon: "panneau_princé",
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/f50.png",
-      Est:   "images/f50.png",
       Ouest: "images/50.png"
     }
   },
+
+ 
 
   {
     type: "polygon",
@@ -586,7 +579,7 @@ if (lastZone !== insideZone.name && lastPos) {
   clearTimeout(arrivalTimeout);
   arrivalTimeout = setTimeout(() => {
     lastZone = insideZone.name;
-  }, 5000); // 5 secondes avant de considérer la zone comme "stable"
+  }, 2000); // 5 secondes avant de considérer la zone comme "stable"
 
 } else {
 
@@ -660,6 +653,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
