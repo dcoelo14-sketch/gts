@@ -113,7 +113,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.36  coelod 2026
+  version 0.1.37  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -165,7 +165,8 @@ const zones = [
       Est:   "images/droite.png",
       Ouest: "images/gauche.png"
 	}
-    },
+    }
+	];
 	const paths = [
 	{
 		name: "deviation",
@@ -652,6 +653,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
