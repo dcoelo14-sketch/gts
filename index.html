@@ -113,7 +113,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.34  coelod 2026
+  version 0.1.35  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -322,7 +322,27 @@ const zones = [
       Ouest: "images/50.png"
     }
   },
-
+	{
+		type: "polyline",
+		name: "lacet",
+		icon: "images/gauche.png",
+		path: [
+		{ lat: 48.22429117444584, lng: -1.039772939077637},
+{ lat: 48.2227615382385, lng: -1.0412320607686585},
+{ lat: 48.22263287516497, lng: -1.0439571851033609},
+{ lat: 48.22231836406813, lng: -1.045609425841724},
+{ lat: 48.221274745220555, lng: -1.0461458676398936},
+{ lat: 48.22027399483554, lng: -1.0452446454189683},
+{ lat: 48.21973072214787, lng:  -1.043635320024459},
+{ lat: 48.219359005934415, lng:  -1.0417685025668284},
+{ lat: 48.21887291142888, lng:  -1.04088873801783},
+{ lat: 48.21800078912957,  lng: -1.040695618970489},
+{ lat: 48.21738600546633,  lng: -1.0417470448949016},
+{ lat: 48.21674261930849,  lng: -1.0443648808699701},
+{ lat: 48.216385179060524, lng:  -1.0458240025609917},
+{ lat: 48.21532714130115, lng:  -1.0468325131415508}
+],
+	},
  
 
   {
@@ -653,6 +673,7 @@ function stopTracking() {
 
 </body>
 </html>
+
 
 
 
