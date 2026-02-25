@@ -251,25 +251,7 @@ const zones = [
       { lat: 48.23342, lng: -1.02967 }
     ]
   },
-  {
-    type: "polygon",
-    name: "Chatillon",
-    icon: "images/Chatillon.png",
-    points: [
-      { lat: 48.22540, lng: -1.17129 },
-      { lat: 48.21943, lng: -1.17107 },
-      { lat: 48.22207, lng: -1.18125 },
-      { lat: 48.22681, lng: -1.18498 }
-    ],
-    expectedTime: "19:35",
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/50.png"
-    }
-  },
-  {
+    {
     type: "polygon",
     name: "La Croixille",
     icon: "images/priorite.png",
@@ -333,6 +315,24 @@ const paths = [
       { lat: 48.215, lng: -1.046}
     ]
   }
+	{
+		name: "chatillon",
+			expectedTime: "19:35",
+			path:[
+{ lat: 48.225, lng:-1.171},
+{ lat: 48.225, lng:-1.172},
+{ lat: 48.223, lng:-1.174},
+{ lat: 48.223, lng:-1.175},
+{ lat: 48.223, lng:-1.177},
+{ lat: 48.223, lng:-1.180},
+{ lat: 48.221, lng:-1.181},
+{ lat: 48.219, lng:-1.182},
+{ lat: 48.217, lng:-1.183},
+{ lat: 48.208, lng:-1.182},
+{ lat: 48.207, lng:-1.182},
+{ lat: 48.207, lng:-1.181}
+	]
+	}
 ];
 
 /* ============================
@@ -404,10 +404,10 @@ function bearing(lat1, lon1, lat2, lon2) {
 
 function bearingToText(b) {
   // 0°=Nord, 90°=Est, 180°=Sud, 270°=Ouest
-  if (b >= 45 && b < 135) return "Est";
-  if (b >= 135 && b < 225) return "Sud";
-  if (b >= 225 && b < 315) return "Ouest";
-  return "Nord";
+  if (b >= 45 && b < 135) return "Ouest";
+  if (b >= 135 && b < 225) return "Nord";
+  if (b >= 225 && b < 315) return "Est";
+  return "Sud";
 }
 
 /* ============================
@@ -758,6 +758,7 @@ window.initMap = initMap; // si tu utilises la carte*/
 
 </body>
 </html>
+
 
 
 
