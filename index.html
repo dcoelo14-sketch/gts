@@ -113,7 +113,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.37  coelod 2026
+  version 0.1.38  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -314,23 +314,23 @@ const paths = [
       { lat: 48.216, lng: -1.045},
       { lat: 48.215, lng: -1.046}
     ]
-  }
+  },
 	{
 		name: "chatillon",
-			
-			path:[
-{ lat: 48.225, lng:-1.171},
-{ lat: 48.225, lng:-1.172},
-{ lat: 48.223, lng:-1.174},
-{ lat: 48.223, lng:-1.175},
-{ lat: 48.223, lng:-1.177},
-{ lat: 48.223, lng:-1.180},
-{ lat: 48.221, lng:-1.181},
-{ lat: 48.219, lng:-1.182},
-{ lat: 48.217, lng:-1.183},
-{ lat: 48.208, lng:-1.182},
-{ lat: 48.207, lng:-1.182},
-{ lat: 48.207, lng:-1.181}
+		path: [
+{ lat: 48.225, lng: -1.171},
+			expectedTime: "19:35",
+{ lat: 48.225, lng: -1.172},
+{ lat: 48.223, lng: -1.174},
+{ lat: 48.223, lng: -1.175},
+{ lat: 48.223, lng: -1.177},
+{ lat: 48.223, lng: -1.180},
+{ lat: 48.221, lng: -1.181},
+{ lat: 48.219, lng: -1.182},
+{ lat: 48.217, lng: -1.183},
+{ lat: 48.208, lng: -1.182},
+{ lat: 48.207, lng: -1.182},
+{ lat: 48.207, lng: -1.181}
 	]
 	}
 ];
@@ -758,6 +758,7 @@ window.initMap = initMap; // si tu utilises la carte*/
 
 </body>
 </html>
+
 
 
 
