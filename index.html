@@ -133,11 +133,12 @@
 
 <script>
 /* ======================================================
-   CONFIG ZONES & CHEMINS – VERSION CORRIGÉE ET COMPLÈTE
+   GTS – app.js (Zones, Paths, GPS, UI)
+   Auteur : dcoelo14-sketch
    ====================================================== */
 
 /* ============================
-   ZONES GPS (FUSION CORRIGÉE)
+   DONNÉES : ZONES
    ============================ */
 const zones = [
   {
@@ -176,8 +177,6 @@ const zones = [
       Ouest: "images/gauche.png"
     }
   },
-
-  // --- second bloc fusionné ---
   {
     type: "circle",
     name: "Radar 80",
@@ -258,7 +257,25 @@ const zones = [
       { lat: 48.23342, lng: -1.02967 }
     ]
   },
-    {
+  {
+    type: "polygon",
+    name: "Chatillon",
+    icon: "images/Chatillon.png",
+    points: [
+      { lat: 48.22540, lng: -1.17129 },
+      { lat: 48.21943, lng: -1.17107 },
+      { lat: 48.22207, lng: -1.18125 },
+      { lat: 48.22681, lng: -1.18498 }
+    ],
+    expectedTime: "19:35",
+    directionIcons: {
+      Nord:  "images/50.png",
+      Sud:   "images/50.png",
+      Est:   "images/50.png",
+      Ouest: "images/50.png"
+    }
+  },
+  {
     type: "polygon",
     name: "La Croixille",
     icon: "images/priorite.png",
@@ -280,7 +297,7 @@ const zones = [
 ];
 
 /* ============================
-   CHEMINS (PATHS)
+   DONNÉES : PATHS (polylignes)
    ============================ */
 const paths = [
   {
@@ -321,39 +338,23 @@ const paths = [
       { lat: 48.216, lng: -1.045},
       { lat: 48.215, lng: -1.046}
     ]
-  },
-	{
-		name: "chatillon",
-		path: [
-{ lat: 48.225, lng: -1.171},
-{ lat: 48.225, lng: -1.172},
-{ lat: 48.223, lng: -1.174},
-{ lat: 48.223, lng: -1.175},
-{ lat: 48.223, lng: -1.177},
-{ lat: 48.223, lng: -1.180},
-{ lat: 48.221, lng: -1.181},
-{ lat: 48.219, lng: -1.182},
-{ lat: 48.217, lng: -1.183},
-{ lat: 48.208, lng: -1.182},
-{ lat: 48.207, lng: -1.182},
-{ lat: 48.207, lng: -1.181}
-	]
-	}
+  }
 ];
 
 /* ============================
-   ICONES DIRECTIONNELLES
+   ICÔNES DIRECTIONNELLES
    ============================ */
 const iconLeft  = "images/gauche.png";
 const iconRight = "images/droite.png";
 
 /* ============================
-   ETAT GLOBAL
+   ÉTAT GLOBAL
    ============================ */
+let map = null;
 let watchId = null;
 let lastZoneName = null;
-let lastPos = null;
-let lastSpeed = 0;
+let lastPos = null;       // {lat, lng}
+let lastSpeed = 0;        // m/s lissé
 let arrivalTimeoutId = null;
 
 /* ============================
@@ -362,7 +363,6 @@ let arrivalTimeoutId = null;
 function getTimingStatus(expectedTime) {
   const now = new Date();
   const [h, m] = expectedTime.split(":").map(Number);
-
   const expected = new Date();
   expected.setHours(h, m, 0, 0);
 
@@ -387,7 +387,6 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 function polygonCentroid(points) {
-  // simple moyenne (suffisante ici)
   let lat = 0, lng = 0;
   for (const p of points) { lat += p.lat; lng += p.lng; }
   return { lat: lat / points.length, lng: lng / points.length };
@@ -410,10 +409,10 @@ function bearing(lat1, lon1, lat2, lon2) {
 
 function bearingToText(b) {
   // 0°=Nord, 90°=Est, 180°=Sud, 270°=Ouest
-  if (b >= 45 && b < 135) return "Ouest";
-  if (b >= 135 && b < 225) return "Nord";
-  if (b >= 225 && b < 315) return "Est";
-  return "Sud";
+  if (b >= 45 && b < 135) return "Est";
+  if (b >= 135 && b < 225) return "Sud";
+  if (b >= 225 && b < 315) return "Ouest";
+  return "Nord";
 }
 
 /* ============================
@@ -444,17 +443,30 @@ function toggleNightMode() {
    VITESSE LISSEE
    ============================ */
 function smoothSpeed(s) {
-  if (s === null) return lastSpeed;
+  if (s === null || isNaN(s)) return lastSpeed;
   lastSpeed = lastSpeed * 0.6 + s * 0.4;
   return lastSpeed;
 }
 
 /* ============================
-   ICÔNES SUR LES CHEMINS (Maps)
+   UI HELPERS
    ============================ */
-// ⚠️ nécessite la lib "geometry" de Google Maps JS
-function addDirectionIcons(path, map) {
-  if (!window.google || !google.maps || !google.maps.geometry) return;
+function setIconBox(src, alt = "") {
+  const iconBox = document.getElementById("icon");
+  if (!iconBox) return;
+  const safeSrc = src || "images/none.png";
+  iconBox.innerHTML = `<img src="${safeSrc}" alt="${alt}" style="height:48px;vertical-align:middle">`;
+}
+
+/* ============================
+   FLÈCHES SUR LES CHEMINS
+   (nécessite libraries=geometry)
+   ============================ */
+function addDirectionIcons(path, mapInstance) {
+  if (!window.google || !google.maps || !google.maps.geometry) {
+    console.warn("[GTS] google.maps.geometry indisponible – flèches non tracées (ajoute libraries=geometry).");
+    return;
+  }
 
   for (let i = 1; i < path.length - 1; i++) {
     const prev = path[i - 1];
@@ -472,7 +484,7 @@ function addDirectionIcons(path, map) {
 
     new google.maps.Marker({
       position: curr,
-      map: map,
+      map: mapInstance,
       icon: {
         url: icon,
         scaledSize: new google.maps.Size(32, 32)
@@ -482,61 +494,48 @@ function addDirectionIcons(path, map) {
 }
 
 /* ============================
-   AFFICHAGE CARTE (OPTIONNEL)
+   AFFICHAGE CARTE
    ============================ */
-// Fournit une initMap standard + dessin des zones et chemins si tu l’utilises.
-let map = null;
-function initMap() {
-  if (!window.google || !google.maps) return;
-
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 48.25, lng: -1.05 },
-    zoom: 11,
-    mapTypeId: "roadmap",
-  });
-
-  drawZonesOnMap(map);
-  drawPathsOnMap(map);
-}
-
-function drawZonesOnMap(map) {
+function drawZonesOnMap(mapInstance) {
   if (!window.google || !google.maps) return;
 
   zones.forEach(z => {
     if (z.type === "circle") {
       new google.maps.Circle({
-        map,
+        map: mapInstance,
         center: { lat: z.lat, lng: z.lng },
         radius: z.radius,
         strokeColor: "#1e90ff",
-        strokeOpacity: 0.8,
+        strokeOpacity: 0.9,
         strokeWeight: 2,
         fillColor: "#1e90ff",
-        fillOpacity: 0.15,
+        fillOpacity: 0.15
       });
+
       if (z.icon) {
         new google.maps.Marker({
           position: { lat: z.lat, lng: z.lng },
-          map,
+          map: mapInstance,
           title: z.name,
           icon: z.icon
         });
       }
     } else if (z.type === "polygon") {
       new google.maps.Polygon({
-        map,
+        map: mapInstance,
         paths: z.points,
         strokeColor: "#ff7f50",
-        strokeOpacity: 0.8,
+        strokeOpacity: 0.9,
         strokeWeight: 2,
         fillColor: "#ff7f50",
-        fillOpacity: 0.15,
+        fillOpacity: 0.15
       });
+
       if (z.icon) {
         const c = polygonCentroid(z.points);
         new google.maps.Marker({
           position: c,
-          map,
+          map: mapInstance,
           title: z.name,
           icon: z.icon
         });
@@ -545,43 +544,70 @@ function drawZonesOnMap(map) {
   });
 }
 
-function drawPathsOnMap(map) {
+function drawPathsOnMap(mapInstance) {
   if (!window.google || !google.maps) return;
 
   paths.forEach(p => {
-    const polyline = new google.maps.Polyline({
+    new google.maps.Polyline({
       path: p.path,
       geodesic: true,
       strokeColor: "#2e8b57",
       strokeOpacity: 1.0,
       strokeWeight: 3,
-      map
+      map: mapInstance
     });
-    addDirectionIcons(p.path, map);
+
+    // Ajoute les flèches directionnelles
+    addDirectionIcons(p.path, mapInstance);
   });
 }
 
-/* ============================
-   TRACKING GPS + ALERTES
-   ============================ */
-function playAlertForZone(z) {
-  // Priorité au son spécifique de la zone si défini
-  if (z && z.sound) {
-    try {
-      const a = new Audio(z.sound);
-      a.play().catch(() => {/* ignore blocage auto-play */});
-      return;
-    } catch (_) { /* no-op */ }
+function initMap() {
+  if (!window.google || !google.maps) {
+    console.error("[GTS] Google Maps n'a pas chargé !");
+    return;
   }
-  const el = document.getElementById("alertSound");
-  if (el) {
-    el.play().catch(() => {/* ignore blocage auto-play */});
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 48.25, lng: -1.05 },
+    zoom: 12,
+    mapTypeId: "roadmap"
+  });
+
+  // Dessins
+  drawZonesOnMap(map);
+  drawPathsOnMap(map);
+
+  // Info : geometry ?
+  if (!google.maps.geometry) {
+    console.warn("[GTS] Tip : ajoute &libraries=geometry à l'URL du SDK pour activer les flèches.");
   }
 }
 
+/* ============================
+   ALERTES SONORES
+   ============================ */
+function playAlertForZone(z) {
+  // Son spécifique de la zone si défini
+  if (z && z.sound) {
+    try {
+      const a = new Audio(z.sound);
+      a.play().catch(() => {/* autoplay bloqué, on ignore */});
+      return;
+    } catch (_) { /* ignore */ }
+  }
+  // Fallback élément audio global
+  const el = document.getElementById("alertSound");
+  if (el) {
+    el.play().catch(() => {/* ignore */});
+  }
+}
+
+/* ============================
+   TRACKING GPS
+   ============================ */
 function startTracking() {
   const status      = document.getElementById("status");
-  const iconBox     = document.getElementById("icon");
   const distanceBox = document.getElementById("distance");
   const speedBox    = document.getElementById("speed");
   const timingBox   = document.getElementById("timing");
@@ -594,22 +620,19 @@ function startTracking() {
     return;
   }
 
-  if (status) {
-    status.textContent = "Géolocalisation en cours...";
-    status.className = "";
-  }
+  if (status) { status.textContent = "Géolocalisation en cours..."; status.className = ""; }
 
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
 
-      /* --- VITESSE GPS --- */
+      /* --- Vitesse --- */
       const s = pos.coords.speed; // m/s (peut être null)
       if (s === null) {
         if (speedBox) speedBox.textContent = "-- km/h";
       } else {
-        const kmh = (smoothSpeed(s) * 3.6);
+        const kmh = smoothSpeed(s) * 3.6;
         if (speedBox) {
           speedBox.textContent = `${kmh.toFixed(0)} km/h`;
           if (kmh < 50)      speedBox.style.color = "#0a7a0a";
@@ -618,7 +641,7 @@ function startTracking() {
         }
       }
 
-      /* --- DÉTECTION ZONES --- */
+      /* --- Détection zones --- */
       let insideZone  = null;
       let closestZone = null;
       let minDist     = Infinity;
@@ -629,7 +652,6 @@ function startTracking() {
           if (d < minDist) { minDist = d; closestZone = z; }
           if (d <= z.radius) insideZone = z;
         } else if (z.type === "polygon") {
-          // distance au centroïde pour closestZone
           const c = polygonCentroid(z.points);
           const d = distanceMeters(lat, lng, c.lat, c.lng);
           if (d < minDist) { minDist = d; closestZone = z; }
@@ -641,9 +663,9 @@ function startTracking() {
         distanceBox.textContent = `${closestZone.name} : ${Math.round(minDist)} m`;
       }
 
-      /* --- DANS / HORS ZONE --- */
+      /* --- État / Messages --- */
       if (insideZone) {
-        // Détection du sens d'arrivée (à la première entrée)
+        // Nouvelle entrée dans la zone (détection sens d’arrivée)
         if (lastZoneName !== insideZone.name && lastPos) {
           const b   = bearing(lastPos.lat, lastPos.lng, lat, lng);
           const dir = bearingToText(b);
@@ -657,34 +679,24 @@ function startTracking() {
             ? insideZone.directionIcons[dir]
             : (insideZone.icon || "images/none.png");
 
-          if (iconBox) {
-            iconBox.innerHTML = `<img src="${dirIcon}" alt="${dir || insideZone.name}">`;
-          }
+          setIconBox(dirIcon, dir);
 
-          // Alerte à l'entrée
           playAlertForZone(insideZone);
 
-          // Stabilisation de la zone (éviter clignotements si GPS bruité)
           if (arrivalTimeoutId) clearTimeout(arrivalTimeoutId);
           arrivalTimeoutId = setTimeout(() => {
             lastZoneName = insideZone.name;
-          }, 2000);
+          }, 2000); // stabilisation (2 s)
 
         } else {
-          // Zone stabilisée : affichage "Vous êtes sur..."
+          // Zone stabilisée
           if (lastZoneName === insideZone.name) {
-            if (status) {
-              status.textContent = `Vous êtes sur ${insideZone.name}`;
-              status.className = "ok";
-            }
-            if (iconBox) {
-              const src = insideZone.icon || "images/none.png";
-              iconBox.innerHTML = `<img src="${src}" alt="${insideZone.name}">`;
-            }
+            if (status) { status.textContent = `Vous êtes sur ${insideZone.name}`; status.className = "ok"; }
+            setIconBox(insideZone.icon || "images/none.png", insideZone.name);
           }
         }
 
-        // Avance / retard si attendu
+        // Horaire prévu ?
         if (timingBox) {
           if (insideZone.expectedTime) {
             const timing = getTimingStatus(insideZone.expectedTime);
@@ -705,22 +717,14 @@ function startTracking() {
         }
 
       } else {
-        // HORS ZONE
-        if (status) {
-          status.textContent = "Vous êtes hors zone";
-          status.className = "ko";
-        }
-        if (iconBox) {
-          iconBox.innerHTML = `<img src="images/none.png" alt="Aucun point">`;
-        }
-        if (timingBox) {
-          timingBox.textContent = "Statut horaire : --";
-          timingBox.style.color = "white";
-        }
+        // Hors zone
+        if (status) { status.textContent = "Vous êtes hors zone"; status.className = "ko"; }
+        setIconBox("images/none.png", "Aucun");
+        if (timingBox) { timingBox.textContent = "Statut horaire : --"; timingBox.style.color = "white"; }
         lastZoneName = null;
       }
 
-      // Mémorise la position pour le prochain calcul de bearing
+      // Mémorise la position pour le prochain bearing
       lastPos = { lat, lng };
     },
     (err) => {
@@ -739,27 +743,25 @@ function stopTracking() {
   if (watchId !== null) {
     navigator.geolocation.clearWatch(watchId);
     watchId = null;
-    if (status) {
-      status.textContent = "Géolocalisation arrêtée.";
-      status.className = "ko";
-    }
+    if (status) { status.textContent = "Géolocalisation arrêtée."; status.className = "ko"; }
   }
 }
 
 /* ============================
-   SERVICE WORKER
+   SERVICE WORKER (optionnel)
    ============================ */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js").catch(() => {});
 }
 
-/* ============================*/
-   EXPORT GLOBAL (facile à appeler)
-   ============================ 
+/* ============================
+   EXPORTS GLOBAUX
+   ============================ */
+window.initMap = initMap;
 window.startTracking = startTracking;
 window.stopTracking  = stopTracking;
 window.toggleNightMode = toggleNightMode;
-window.initMap = initMap; // si tu utilises la carte
+
 </script>
 
 	<script src="app.js"></script>
@@ -767,6 +769,7 @@ window.initMap = initMap; // si tu utilises la carte
 
 </body>
 </html>
+
 
 
 
