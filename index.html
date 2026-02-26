@@ -120,7 +120,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">jour / nuit</button>
-  version 0.1.46  coelod 2026
+  version 0.1.47  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -244,30 +244,59 @@ const zones = [
    PATHS (pour calcul des virages)
    ============================ */
 const paths = [
+
   {
-    name:"deviation",
-    path:[
-      { lat: 48.242, lng:-1.016 },
-      { lat: 48.241, lng:-1.015 },
-      { lat: 48.237, lng:-1.013 },
-      { lat: 48.235, lng:-1.015 },
-      { lat: 48.231, lng:-1.016 },
-      { lat: 48.231, lng:-1.017 },
-      { lat: 48.229, lng:-1.018 }
+    name: "deviation",
+    path: [
+      { lat: 48.24220, lng: -1.01610 },
+      { lat: 48.24160, lng: -1.01540 },
+      { lat: 48.24070, lng: -1.01440 },
+      { lat: 48.23990, lng: -1.01380 },
+      { lat: 48.23890, lng: -1.01340 },
+      { lat: 48.23780, lng: -1.01300 },
+      { lat: 48.23690, lng: -1.01350 },
+      { lat: 48.23590, lng: -1.01440 },
+      { lat: 48.23480, lng: -1.01520 },
+      { lat: 48.23370, lng: -1.01620 },
+      { lat: 48.23260, lng: -1.01730 },
+      { lat: 48.23180, lng: -1.01840 },
+      { lat: 48.23100, lng: -1.02000 },
+      { lat: 48.23040, lng: -1.02200 },
+      { lat: 48.23020, lng: -1.02530 },
+      { lat: 48.23040, lng: -1.03080 }
     ]
   },
+
   {
-    name:"lacets",
-    path:[
-      { lat:48.224,lng:-1.039 },
-      { lat:48.222,lng:-1.041 },
-      { lat:48.222,lng:-1.043 },
-      { lat:48.222,lng:-1.045 },
-      { lat:48.221,lng:-1.046 },
-      { lat:48.220,lng:-1.045 },
-      { lat:48.219,lng:-1.043 }
+    name: "lacets",
+    path: [
+      { lat: 48.22440, lng: -1.03900 },
+      { lat: 48.22380, lng: -1.03980 },
+      { lat: 48.22320, lng: -1.04090 },
+      { lat: 48.22270, lng: -1.04210 },
+      { lat: 48.22250, lng: -1.04340 },
+      { lat: 48.22240, lng: -1.04470 },
+      { lat: 48.22210, lng: -1.04580 },
+      { lat: 48.22150, lng: -1.04630 },
+      { lat: 48.22080, lng: -1.04590 }
     ]
   }
+{
+  name: "deviation st pierre des landes",
+  path: [
+    { lat: 48.26331, lng: -0.98705 },  // Point A - départ
+    { lat: 48.26440, lng: -0.99010 },  // légère courbe gauche
+    { lat: 48.26610, lng: -0.99480 },  // ligne droite
+    { lat: 48.26730, lng: -0.99950 },  // virage modéré gauche
+    { lat: 48.26840, lng: -1.00400 },  // ligne droite
+    { lat: 48.27010, lng: -1.00920 },  // virage doux droite
+    { lat: 48.27170, lng: -1.01440 },  // ligne droite
+    { lat: 48.27310, lng: -1.01990 },  // virage modéré droite
+    { lat: 48.27460, lng: -1.02520 },  // ligne droite
+    { lat: 48.27610, lng: -1.03050 },  // légère courbe
+    { lat: 48.27719, lng: -1.03530 }   // Point B - arrivée
+  ]
+}
 ];
 
 /* ============================
@@ -352,7 +381,7 @@ function computeTurnIcon(path) {
    ============================ */
 function setIcon(src){
   document.getElementById("icon").innerHTML=
-    `<img src="${src}" style="height:120px">`;
+    `<img src="${src}" style="height:110px">`;
 }
 
 /* ============================
@@ -462,6 +491,7 @@ function toggleNightMode(){
 
 </body>
 </html>
+
 
 
 
