@@ -120,7 +120,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">Mode nuit</button>
-  version 0.1.40  coelod 2026
+  version 0.1.41  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -753,17 +753,21 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js").catch(() => {});
 }
 
-/* ============================
+/* ============================*/
    EXPORT GLOBAL (facile à appeler)
    ============================ 
 window.startTracking = startTracking;
 window.stopTracking  = stopTracking;
 window.toggleNightMode = toggleNightMode;
-window.initMap = initMap; // si tu utilises la carte*/
+window.initMap = initMap; // si tu utilises la carte
 </script>
+
+	<script src="app.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=TA_CLE_API&libraries=geometry&callback=initMap"></script>
 
 </body>
 </html>
+
 
 
 
