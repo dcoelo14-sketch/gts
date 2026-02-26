@@ -119,8 +119,8 @@
 
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
-  <button onclick="toggleNightMode()">jour/nuit</button>
-  version 0.1.42  coelod 2026
+  <button onclick="toggleNightMode()">jour / nuit</button>
+  version 0.1.43  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -494,90 +494,10 @@ function addDirectionIcons(path, mapInstance) {
   }
 }
 
-/* ============================
-   AFFICHAGE CARTE
-   ============================ */
-function drawZonesOnMap(mapInstance) {
-  if (!window.google || !google.maps) return;
 
-  zones.forEach(z => {
-    if (z.type === "circle") {
-      new google.maps.Circle({
-        map: mapInstance,
-        center: { lat: z.lat, lng: z.lng },
-        radius: z.radius,
-        strokeColor: "#1e90ff",
-        strokeOpacity: 0.9,
-        strokeWeight: 2,
-        fillColor: "#1e90ff",
-        fillOpacity: 0.15
-      });
 
-      if (z.icon) {
-        new google.maps.Marker({
-          position: { lat: z.lat, lng: z.lng },
-          map: mapInstance,
-          title: z.name,
-          icon: z.icon
-        });
-      }
-    } else if (z.type === "polygon") {
-      new google.maps.Polygon({
-        map: mapInstance,
-        paths: z.points,
-        strokeColor: "#ff7f50",
-        strokeOpacity: 0.9,
-        strokeWeight: 2,
-        fillColor: "#ff7f50",
-        fillOpacity: 0.15
-      });
 
-      if (z.icon) {
-        const c = polygonCentroid(z.points);
-        new google.maps.Marker({
-          position: c,
-          map: mapInstance,
-          title: z.name,
-          icon: z.icon
-        });
-      }
-    }
-  });
-}
 
-function drawPathsOnMap(mapInstance) {
-  if (!window.google || !google.maps) return;
-
-  paths.forEach(p => {
-    new google.maps.Polyline({
-      path: p.path,
-      geodesic: true,
-      strokeColor: "#2e8b57",
-      strokeOpacity: 1.0,
-      strokeWeight: 3,
-      map: mapInstance
-    });
-
-    // Ajoute les flèches directionnelles
-    addDirectionIcons(p.path, mapInstance);
-  });
-}
-
-function initMap() {
-  if (!window.google || !google.maps) {
-    console.error("[GTS] Google Maps n'a pas chargé !");
-    return;
-  }
-
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 48.25, lng: -1.05 },
-    zoom: 12,
-    mapTypeId: "roadmap"
-  });
-
-  // Dessins
-  drawZonesOnMap(map);
-  drawPathsOnMap(map);
 
   // Info : geometry ?
   if (!google.maps.geometry) {
@@ -769,6 +689,7 @@ window.toggleNightMode = toggleNightMode;
 
 </body>
 </html>
+
 
 
 
