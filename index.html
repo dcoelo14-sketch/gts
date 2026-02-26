@@ -120,7 +120,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">jour / nuit</button>
-  version 0.1.45  coelod 2026
+  version 0.1.46  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -352,7 +352,7 @@ function computeTurnIcon(path) {
    ============================ */
 function setIcon(src){
   document.getElementById("icon").innerHTML=
-    `<img src="${src}" style="height:80px">`;
+    `<img src="${src}" style="height:120px">`;
 }
 
 /* ============================
@@ -462,6 +462,7 @@ function toggleNightMode(){
 
 </body>
 </html>
+
 
 
 
