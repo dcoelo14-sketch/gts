@@ -120,7 +120,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">jour / nuit</button>
-  version 0.1.43  coelod 2026
+  version 0.1.44  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -503,7 +503,7 @@ function addDirectionIcons(path, mapInstance) {
   if (!google.maps.geometry) {
     console.warn("[GTS] Tip : ajoute &libraries=geometry à l'URL du SDK pour activer les flèches.");
   }
-}
+
 
 /* ============================
    ALERTES SONORES
@@ -689,6 +689,7 @@ window.toggleNightMode = toggleNightMode;
 
 </body>
 </html>
+
 
 
 
