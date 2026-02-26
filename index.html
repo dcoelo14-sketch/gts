@@ -120,7 +120,7 @@
   <button onclick="startTracking()">Activer la géolocalisation</button>
   <button onclick="stopTracking()">Arrêter la géolocalisation</button>
   <button onclick="toggleNightMode()">jour / nuit</button>
-  version 0.1.44  coelod 2026
+  version 0.1.45  coelod 2026
   <div id="status"></div>
   <div id="distance"></div>
   <div id="speed">-- km/h</div>
@@ -134,561 +134,335 @@
 
 <script>
 /* ======================================================
-   GTS – app.js (Zones, Paths, GPS, UI)
-   Auteur : dcoelo14-sketch
+   GTS – Version SANS CARTE, AVEC PATHS (virages)
    ====================================================== */
 
 /* ============================
-   DONNÉES : ZONES
+   ZONES
    ============================ */
 const zones = [
   {
     type: "circle",
     name: "Sortie 1 Ernée",
     icon: "images/panneau_ernée.png",
-    lat: 48.29315,
-    lng: -0.94432,
+    lat: 48.29315, lng: -0.94432,
     radius: 150,
     expectedTime: "19:14",
     directionIcons: {
-      Nord:  "images/f50.png",
-      Sud:   "images/50.png",
-      Est:   "images/f50.png",
+      Nord: "images/f50.png",
+      Sud: "images/50.png",
+      Est: "images/f50.png",
       Ouest: "images/f50.png"
     }
   },
   {
     type: "circle",
     name: "Radar 50",
-    lat: 48.29679,
-    lng: -0.91787,
+    lat: 48.29679, lng: -0.91787,
     radius: 200,
     icon: "images/radar50.png"
   },
   {
     type: "circle",
     name: "direction st pierre des landes",
-    lat: 48.26331,
-    lng: -0.98705,
+    lat: 48.26331, lng: -0.98705,
     radius: 200,
-    directionIcons: {
-      Nord:  "images/droite.png",
-      Sud:   "images/gauche.png",
-      Est:   "images/droite.png",
-      Ouest: "images/gauche.png"
+    directionIcons:{
+      Nord:"images/droite.png",
+      Sud:"images/gauche.png",
+      Est:"images/droite.png",
+      Ouest:"images/gauche.png"
     }
   },
   {
-    type: "circle",
-    name: "Radar 80",
-    lat: 48.32754,
-    lng: -1.10005,
-    radius: 200,
-    icon: "images/radar80.png"
+    type:"circle",
+    name:"Radar 80",
+    lat:48.32754,
+    lng:-1.10005,
+    radius:200,
+    icon:"images/radar80.png"
   },
   {
-    type: "circle",
-    name: "pietons",
-    icon: "images/pietons.png",
-    sound: "sounds/alert.wav",
-    lat: 48.29554,
-    lng: -0.93159,
-    radius: 150
+    type:"circle",
+    name:"pietons",
+    icon:"images/pietons.png",
+    sound:"sounds/alert.wav",
+    lat:48.29554, lng:-0.93159,
+    radius:150
   },
   {
-    type: "circle",
-    name: "Bifurcation",
-    lat: 48.22067,
-    lng: -1.09273,
-    radius: 120,
-    expectedTime: "19:30",
-    directionIcons: {
-      Nord:  "images/droite.png",
-      Sud:   "images/gauche.png",
-      Est:   "images/gauche.png",
-      Ouest: "images/droite.png"
+    type:"circle",
+    name:"Bifurcation",
+    lat:48.22067,lng:-1.09273,
+    radius:120,
+    expectedTime:"19:30",
+    directionIcons:{
+      Nord:"images/droite.png",
+      Sud:"images/gauche.png",
+      Est:"images/gauche.png",
+      Ouest:"images/droite.png"
     }
   },
   {
-    type: "circle",
-    name: "Rond Point Belle Epoque",
-    icon: "images/rond.png",
-    lat: 48.29677,
-    lng: -0.93473,
-    radius: 150,
-    expectedTime: "19:12"
+    type:"circle",
+    name:"Rond Point Belle Epoque",
+    icon:"images/rond.png",
+    lat:48.29677,lng:-0.93473,
+    radius:150,
+    expectedTime:"19:12"
   },
   {
-    type: "circle",
-    name: "Juvigné",
-    lat: 48.23222,
-    lng: -1.03108,
-    radius: 120,
-    expectedTime: "19:20",
-    directionIcons: {
-      Nord:  "images/panneau_juvigné.png",
-      Sud:   "images/f50.png",
-      Est:   "images/panneau_juvigné.png",
-      Ouest: "images/f50.png"
+    type:"circle",
+    name:"Juvigné",
+    lat:48.23222,lng:-1.03108,
+    radius:120,
+    expectedTime:"19:20",
+    directionIcons:{
+      Nord:"images/panneau_juvigné.png",
+      Sud:"images/f50.png",
+      Est:"images/panneau_juvigné.png",
+      Ouest:"images/f50.png"
     }
   },
   {
-    type: "circle",
-    name: "princé",
-    icon: "images/panneau_princé.png",
-    lat: 48.21709,
-    lng: -1.08863,
-    radius: 200,
-    expectedTime: "19:30",
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/50.png"
-    }
-  },
-  {
-    type: "polygon",
-    name: "la route de Vitré",
-    icon: "images/80.png",
-    points: [
-      { lat: 48.29274, lng: -0.94525 },
-      { lat: 48.29282, lng: -0.94363 },
-      { lat: 48.23316, lng: -1.02923 },
-      { lat: 48.23342, lng: -1.02967 }
-    ]
-  },
-  {
-    type: "polygon",
-    name: "Chatillon",
-    icon: "images/Chatillon.png",
-    points: [
-      { lat: 48.22540, lng: -1.17129 },
-      { lat: 48.21943, lng: -1.17107 },
-      { lat: 48.22207, lng: -1.18125 },
-      { lat: 48.22681, lng: -1.18498 }
-    ],
-    expectedTime: "19:35",
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/50.png"
-    }
-  },
-  {
-    type: "polygon",
-    name: "La Croixille",
-    icon: "images/priorite.png",
-    expectedTime: "19:27",
-    points: [
-      { lat: 48.20700, lng: -1.05334 },
-      { lat: 48.20562, lng: -1.05217 },
-      { lat: 48.20321, lng: -1.05304 },
-      { lat: 48.20331, lng: -1.06139 },
-      { lat: 48.20638, lng: -1.06146 }
-    ],
-    directionIcons: {
-      Nord:  "images/50.png",
-      Sud:   "images/50.png",
-      Est:   "images/50.png",
-      Ouest: "images/50.png"
+    type:"circle",
+    name:"princé",
+    icon:"images/panneau_princé.png",
+    lat:48.21709,lng:-1.08863,
+    radius:200,
+    expectedTime:"19:30",
+    directionIcons:{
+      Nord:"images/50.png",
+      Sud:"images/50.png",
+      Est:"images/50.png",
+      Ouest:"images/50.png"
     }
   }
 ];
 
 /* ============================
-   DONNÉES : PATHS (polylignes)
+   PATHS (pour calcul des virages)
    ============================ */
 const paths = [
   {
-    name: "deviation",
-    path: [
-      { lat: 48.242, lng:-1.016},
-      { lat: 48.241, lng:-1.015},
-      { lat: 48.237, lng:-1.013},
-      { lat: 48.235, lng:-1.015},
-      { lat: 48.231, lng:-1.016},
-      { lat: 48.231, lng:-1.017},
-      { lat: 48.229, lng:-1.018},
-      { lat: 48.228, lng:-1.022},
-      { lat: 48.229, lng:-1.031},
-      { lat: 48.228, lng:-1.031},
-      { lat: 48.228, lng:-1.033},
-      { lat: 48.228, lng:-1.034},
-      { lat: 48.227, lng:-1.035},
-      { lat: 48.225, lng:-1.036},
-      { lat: 48.222, lng:-1.041}
+    name:"deviation",
+    path:[
+      { lat: 48.242, lng:-1.016 },
+      { lat: 48.241, lng:-1.015 },
+      { lat: 48.237, lng:-1.013 },
+      { lat: 48.235, lng:-1.015 },
+      { lat: 48.231, lng:-1.016 },
+      { lat: 48.231, lng:-1.017 },
+      { lat: 48.229, lng:-1.018 }
     ]
   },
   {
-    name: "lacets",
-    path: [
-      { lat: 48.224, lng: -1.039},
-      { lat: 48.222, lng: -1.041},
-      { lat: 48.222, lng: -1.043},
-      { lat: 48.222, lng: -1.045},
-      { lat: 48.221, lng: -1.046},
-      { lat: 48.220, lng: -1.045},
-      { lat: 48.219, lng: -1.043},
-      { lat: 48.219, lng: -1.041},
-      { lat: 48.218, lng: -1.040},
-      { lat: 48.218, lng: -1.040},
-      { lat: 48.217, lng: -1.041},
-      { lat: 48.216, lng: -1.044},
-      { lat: 48.216, lng: -1.045},
-      { lat: 48.215, lng: -1.046}
+    name:"lacets",
+    path:[
+      { lat:48.224,lng:-1.039 },
+      { lat:48.222,lng:-1.041 },
+      { lat:48.222,lng:-1.043 },
+      { lat:48.222,lng:-1.045 },
+      { lat:48.221,lng:-1.046 },
+      { lat:48.220,lng:-1.045 },
+      { lat:48.219,lng:-1.043 }
     ]
   }
 ];
-
-/* ============================
-   ICÔNES DIRECTIONNELLES
-   ============================ */
-const iconLeft  = "images/gauche.png";
-const iconRight = "images/droite.png";
 
 /* ============================
    ÉTAT GLOBAL
    ============================ */
-let map = null;
-let watchId = null;
-let lastZoneName = null;
-let lastPos = null;       // {lat, lng}
-let lastSpeed = 0;        // m/s lissé
-let arrivalTimeoutId = null;
+let watchId=null;
+let lastPos=null;
+let lastSpeed=0;
+let lastZone=null;
 
 /* ============================
-   OUTILS TEMPS / DISTANCE
+   OUTILS GPS
    ============================ */
-function getTimingStatus(expectedTime) {
-  const now = new Date();
-  const [h, m] = expectedTime.split(":").map(Number);
-  const expected = new Date();
-  expected.setHours(h, m, 0, 0);
-
-  const diffMs = now - expected;
-  const diffMin = Math.round(diffMs / 60000);
-
-  if (diffMin < 0) return { status: "en avance", minutes: Math.abs(diffMin) };
-  if (diffMin > 0) return { status: "en retard", minutes: diffMin };
-  return { status: "à l'heure", minutes: 0 };
-}
-
 function distanceMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat/2)**2 +
-    Math.cos(lat1*Math.PI/180) *
-    Math.cos(lat2*Math.PI/180) *
-    Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const R=6371000;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+
+           Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+           Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-function polygonCentroid(points) {
-  let lat = 0, lng = 0;
-  for (const p of points) { lat += p.lat; lng += p.lng; }
-  return { lat: lat / points.length, lng: lng / points.length };
+function bearing(lat1, lon1, lat2, lon2){
+  const dLon=(lon2-lon1)*Math.PI/180;
+  lat1*=Math.PI/180;
+  lat2*=Math.PI/180;
+  const y=Math.sin(dLon)*Math.cos(lat2);
+  const x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;
 }
 
-/* ============================
-   BEARING (DIRECTION)
-   ============================ */
-function bearing(lat1, lon1, lat2, lon2) {
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  lat1 *= Math.PI / 180;
-  lat2 *= Math.PI / 180;
-
-  const y = Math.sin(dLon) * Math.cos(lat2);
-  const x = Math.cos(lat1) * Math.sin(lat2) -
-            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-}
-
-function bearingToText(b) {
-  // 0°=Nord, 90°=Est, 180°=Sud, 270°=Ouest
-  if (b >= 45 && b < 135) return "Est";
-  if (b >= 135 && b < 225) return "Sud";
-  if (b >= 225 && b < 315) return "Ouest";
+function bearingToText(b){
+  if(b>=45 && b<135) return "Est";
+  if(b>=135 && b<225) return "Sud";
+  if(b>=225 && b<315) return "Ouest";
   return "Nord";
 }
 
-/* ============================
-   POINT DANS POLYGONE
-   ============================ */
-function isPointInPolygon(lat, lng, polygon) {
-  // Ray casting (x=lat, y=lng)
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].lat, yi = polygon[i].lng;
-    const xj = polygon[j].lat, yj = polygon[j].lng;
+function smoothSpeed(s){
+  if(s==null) return lastSpeed;
+  lastSpeed=lastSpeed*0.6 + s*0.4;
+  return lastSpeed;
+}
 
-    const intersect = ((yi > lng) !== (yj > lng)) &&
-                      (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
+/* ============================
+   CALCUL DES VIRAGES SANS GOOGLE MAPS
+   ============================ */
+
+function computeTurnIcon(path) {
+  if (!lastPos) return null;
+
+  // On cherche le segment le plus proche
+  let nearest=null;
+  let min=Infinity;
+
+  for (let i=0;i<path.length-1;i++){
+    const p = path[i];
+    const d = distanceMeters(lastPos.lat,lastPos.lng,p.lat,p.lng);
+    if(d<min){min=d; nearest=i;}
   }
-  return inside;
+
+  // On a besoin de 3 points pour angle
+  if(nearest<=0 || nearest>=path.length-1) return null;
+
+  const A = path[nearest-1];
+  const B = path[nearest];
+  const C = path[nearest+1];
+
+  const h1 = bearing(A.lat,A.lng,B.lat,B.lng);
+  const h2 = bearing(B.lat,B.lng,C.lat,C.lng);
+
+  let diff = h2 - h1;
+  if (diff>180) diff-=360;
+  if (diff<-180) diff+=360;
+
+  return diff>0 ? iconRight : iconLeft;
+}
+
+/* ============================
+   UI
+   ============================ */
+function setIcon(src){
+  document.getElementById("icon").innerHTML=
+    `<img src="${src}" style="height:80px">`;
+}
+
+/* ============================
+   ALERTES
+   ============================ */
+function playAlert(zone) {
+  if(zone.sound){
+    new Audio(zone.sound).play().catch(()=>{});
+  } else {
+    document.getElementById("alertSound").play().catch(()=>{});
+  }
+}
+
+/* ============================
+   BOUCLE GPS
+   ============================ */
+function startTracking(){
+  const st=document.getElementById("status");
+
+  watchId=navigator.geolocation.watchPosition(
+    pos=>{
+      const lat=pos.coords.latitude;
+      const lng=pos.coords.longitude;
+
+      /* vitesse */
+      const kmh = smoothSpeed(pos.coords.speed)*3.6;
+      document.getElementById("speed").textContent =
+        isNaN(kmh) ? "-- km/h" : kmh.toFixed(0)+" km/h";
+
+      /* zones */
+      let inside=null;
+      let nearest=null;
+      let best=Infinity;
+
+      for(const z of zones){
+        let d;
+        if(z.type==="circle"){
+          d = distanceMeters(lat,lng,z.lat,z.lng);
+          if(d<best){best=d; nearest=z;}
+          if(d<=z.radius) inside=z;
+        }
+      }
+
+      document.getElementById("distance").textContent =
+        nearest ? `${nearest.name} : ${best|0} m` : "--";
+
+      /* entrée de zone */
+      if(inside){
+        if(lastZone!==inside.name && lastPos){
+          const b=bearing(lastPos.lat,lastPos.lng,lat,lng);
+          const dir=bearingToText(b);
+
+          setIcon( inside.directionIcons?.[dir] || inside.icon );
+
+          playAlert(inside);
+
+          st.innerHTML=`Arrivée dans <b>${inside.name}</b> depuis le <b>${dir}</b>`;
+          st.className="ok";
+
+          lastZone=inside.name;
+        }
+        else{
+          st.textContent=`Vous êtes sur ${inside.name}`;
+          st.className="ok";
+          setIcon(inside.icon);
+        }
+      }
+      else{
+        st.textContent="Hors zone";
+        st.className="ko";
+        setIcon("images/none.png");
+        lastZone=null;
+      }
+
+      /* virage (PATHS) */
+      for(const p of paths){
+        const icon = computeTurnIcon(p.path);
+        if(icon){
+          setIcon(icon);
+        }
+      }
+
+      lastPos={lat,lng};
+    },
+    err=>{
+      st.textContent="Erreur GPS : "+err.message;
+      st.className="ko";
+    },
+    { enableHighAccuracy:true, maximumAge:400, timeout:5000 }
+  );
+}
+
+function stopTracking(){
+  navigator.geolocation.clearWatch(watchId);
+  document.getElementById("status").textContent="GPS arrêté.";
 }
 
 /* ============================
    MODE NUIT
    ============================ */
-function toggleNightMode() {
+function toggleNightMode(){
   document.body.classList.toggle("night");
 }
-
-/* ============================
-   VITESSE LISSEE
-   ============================ */
-function smoothSpeed(s) {
-  if (s === null || isNaN(s)) return lastSpeed;
-  lastSpeed = lastSpeed * 0.6 + s * 0.4;
-  return lastSpeed;
-}
-
-/* ============================
-   UI HELPERS
-   ============================ */
-function setIconBox(src, alt = "") {
-  const iconBox = document.getElementById("icon");
-  if (!iconBox) return;
-  const safeSrc = src || "images/none.png";
-  iconBox.innerHTML = `<img src="${safeSrc}" alt="${alt}" style="height:48px;vertical-align:middle">`;
-}
-
-/* ============================
-   FLÈCHES SUR LES CHEMINS
-   (nécessite libraries=geometry)
-   ============================ */
-function addDirectionIcons(path, mapInstance) {
-  if (!window.google || !google.maps || !google.maps.geometry) {
-    console.warn("[GTS] google.maps.geometry indisponible – flèches non tracées (ajoute libraries=geometry).");
-    return;
-  }
-
-  for (let i = 1; i < path.length - 1; i++) {
-    const prev = path[i - 1];
-    const curr = path[i];
-    const next = path[i + 1];
-
-    const h1 = google.maps.geometry.spherical.computeHeading(prev, curr);
-    const h2 = google.maps.geometry.spherical.computeHeading(curr, next);
-
-    let diff = h2 - h1;
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    const icon = diff > 0 ? iconRight : iconLeft;
-
-    new google.maps.Marker({
-      position: curr,
-      map: mapInstance,
-      icon: {
-        url: icon,
-        scaledSize: new google.maps.Size(32, 32)
-      }
-    });
-  }
-}
-
-
-
-
-
-
-  // Info : geometry ?
-  if (!google.maps.geometry) {
-    console.warn("[GTS] Tip : ajoute &libraries=geometry à l'URL du SDK pour activer les flèches.");
-  }
-
-
-/* ============================
-   ALERTES SONORES
-   ============================ */
-function playAlertForZone(z) {
-  // Son spécifique de la zone si défini
-  if (z && z.sound) {
-    try {
-      const a = new Audio(z.sound);
-      a.play().catch(() => {/* autoplay bloqué, on ignore */});
-      return;
-    } catch (_) { /* ignore */ }
-  }
-  // Fallback élément audio global
-  const el = document.getElementById("alertSound");
-  if (el) {
-    el.play().catch(() => {/* ignore */});
-  }
-}
-
-/* ============================
-   TRACKING GPS
-   ============================ */
-function startTracking() {
-  const status      = document.getElementById("status");
-  const distanceBox = document.getElementById("distance");
-  const speedBox    = document.getElementById("speed");
-  const timingBox   = document.getElementById("timing");
-
-  if (!navigator.geolocation) {
-    if (status) {
-      status.textContent = "La géolocalisation n'est pas supportée.";
-      status.className = "ko";
-    }
-    return;
-  }
-
-  if (status) { status.textContent = "Géolocalisation en cours..."; status.className = ""; }
-
-  watchId = navigator.geolocation.watchPosition(
-    (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-
-      /* --- Vitesse --- */
-      const s = pos.coords.speed; // m/s (peut être null)
-      if (s === null) {
-        if (speedBox) speedBox.textContent = "-- km/h";
-      } else {
-        const kmh = smoothSpeed(s) * 3.6;
-        if (speedBox) {
-          speedBox.textContent = `${kmh.toFixed(0)} km/h`;
-          if (kmh < 50)      speedBox.style.color = "#0a7a0a";
-          else if (kmh < 80) speedBox.style.color = "#e6a800";
-          else               speedBox.style.color = "#a30000";
-        }
-      }
-
-      /* --- Détection zones --- */
-      let insideZone  = null;
-      let closestZone = null;
-      let minDist     = Infinity;
-
-      for (const z of zones) {
-        if (z.type === "circle") {
-          const d = distanceMeters(lat, lng, z.lat, z.lng);
-          if (d < minDist) { minDist = d; closestZone = z; }
-          if (d <= z.radius) insideZone = z;
-        } else if (z.type === "polygon") {
-          const c = polygonCentroid(z.points);
-          const d = distanceMeters(lat, lng, c.lat, c.lng);
-          if (d < minDist) { minDist = d; closestZone = z; }
-          if (isPointInPolygon(lat, lng, z.points)) insideZone = z;
-        }
-      }
-
-      if (distanceBox && closestZone) {
-        distanceBox.textContent = `${closestZone.name} : ${Math.round(minDist)} m`;
-      }
-
-      /* --- État / Messages --- */
-      if (insideZone) {
-        // Nouvelle entrée dans la zone (détection sens d’arrivée)
-        if (lastZoneName !== insideZone.name && lastPos) {
-          const b   = bearing(lastPos.lat, lastPos.lng, lat, lng);
-          const dir = bearingToText(b);
-
-          if (status) {
-            status.innerHTML = `Arrivée dans <strong>${insideZone.name}</strong> depuis le <span class="dir-text">${dir}</span>`;
-            status.className = "ok";
-          }
-
-          const dirIcon = (insideZone.directionIcons && insideZone.directionIcons[dir])
-            ? insideZone.directionIcons[dir]
-            : (insideZone.icon || "images/none.png");
-
-          setIconBox(dirIcon, dir);
-
-          playAlertForZone(insideZone);
-
-          if (arrivalTimeoutId) clearTimeout(arrivalTimeoutId);
-          arrivalTimeoutId = setTimeout(() => {
-            lastZoneName = insideZone.name;
-          }, 2000); // stabilisation (2 s)
-
-        } else {
-          // Zone stabilisée
-          if (lastZoneName === insideZone.name) {
-            if (status) { status.textContent = `Vous êtes sur ${insideZone.name}`; status.className = "ok"; }
-            setIconBox(insideZone.icon || "images/none.png", insideZone.name);
-          }
-        }
-
-        // Horaire prévu ?
-        if (timingBox) {
-          if (insideZone.expectedTime) {
-            const timing = getTimingStatus(insideZone.expectedTime);
-            if (timing.status === "en avance") {
-              timingBox.textContent = `En avance de ${timing.minutes} min`;
-              timingBox.style.color = "green";
-            } else if (timing.status === "en retard") {
-              timingBox.textContent = `En retard de ${timing.minutes} min`;
-              timingBox.style.color = "red";
-            } else {
-              timingBox.textContent = "À l'heure";
-              timingBox.style.color = "orange";
-            }
-          } else {
-            timingBox.textContent = "Statut horaire : --";
-            timingBox.style.color = "white";
-          }
-        }
-
-      } else {
-        // Hors zone
-        if (status) { status.textContent = "Vous êtes hors zone"; status.className = "ko"; }
-        setIconBox("images/none.png", "Aucun");
-        if (timingBox) { timingBox.textContent = "Statut horaire : --"; timingBox.style.color = "white"; }
-        lastZoneName = null;
-      }
-
-      // Mémorise la position pour le prochain bearing
-      lastPos = { lat, lng };
-    },
-    (err) => {
-      const status = document.getElementById("status");
-      if (status) {
-        status.textContent = "Erreur : " + err.message;
-        status.className = "ko";
-      }
-    },
-    { enableHighAccuracy: true, maximumAge: 400, timeout: 5000 }
-  );
-}
-
-function stopTracking() {
-  const status = document.getElementById("status");
-  if (watchId !== null) {
-    navigator.geolocation.clearWatch(watchId);
-    watchId = null;
-    if (status) { status.textContent = "Géolocalisation arrêtée."; status.className = "ko"; }
-  }
-}
-
-/* ============================
-   SERVICE WORKER (optionnel)
-   ============================ */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js").catch(() => {});
-}
-
-/* ============================
-   EXPORTS GLOBAUX
-   ============================ */
-window.initMap = initMap;
-window.startTracking = startTracking;
-window.stopTracking  = stopTracking;
-window.toggleNightMode = toggleNightMode;
-
 </script>
 
 
 
 </body>
 </html>
+
 
 
 
