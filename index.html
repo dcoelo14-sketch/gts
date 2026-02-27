@@ -133,6 +133,13 @@
 </div>
 
 <script>
+	
+const ws = new WebSocket("ws://localhost:8080");
+
+ws.onmessage = (ev) => {
+    console.log("GPS:", JSON.parse(ev.data));
+};
+
 /* ======================================================
    GTS – Version SANS CARTE, AVEC PATHS (virages)
    ====================================================== */
@@ -491,6 +498,7 @@ function toggleNightMode(){
 
 </body>
 </html>
+
 
 
 
