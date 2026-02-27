@@ -473,7 +473,7 @@ function startTracking(){
       st.textContent="Erreur GPS : "+err.message;
       st.className="ko";
     },
-    { enableHighAccuracy: false, maximumAge:200, timeout:80000 }
+    { enableHighAccuracy: true, maximumAge:200, timeout:80000 }
   );
 
 
@@ -494,6 +494,7 @@ function toggleNightMode(){
 
 </body>
 </html>
+
 
 
 
