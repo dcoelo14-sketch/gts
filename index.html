@@ -67,7 +67,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>Sans carte, uniquement paths & virages. Lookahead robuste, anti‑clignotement.</footer>
+  <footer>Sans carte, uniquement paths &amp; virages. Lookahead robuste, anti‑clignotement.</footer>
 
   <script>
     /* =========================
@@ -108,245 +108,133 @@
     /* =========================
        Vos PATHS (repris intégralement)
        ========================= */
-  const paths = [
-    
-	
-{
-name: "déviation chailland",
+    const paths = [
+   {
+name: "chailland",
 path: [
-{ lat: 48.27980, lon: -0.96361 },
-{ lat: 48.28062, lon: -0.96225 },
-{ lat: 48.27325, lon: -0.96291 },
-{ lat: 48.26461, lon: -0.95965 },
-{ lat: 48.25822, lon: -0.96105 },
-{ lat: 48.25502, lon: -0.96429 },
-{ lat: 48.25243, lon: -0.96442 },
-{ lat: 48.25169, lon: -0.96266 },
-{ lat: 48.24605, lon: -0.95814 },
-{ lat: 48.24113, lon: -0.95768 },
-{ lat: 48.23259, lon: -0.95980 },
-{ lat: 48.22756, lon: -0.95817 },
-{ lat: 48.22790, lon: -0.96248 },
-{ lat: 48.22705, lon: -1.00369 },
-{ lat: 48.22805, lon: -1.00879 },
-{ lat: 48.22746, lon: -1.01063 },
-{ lat: 48.22890, lon: -1.01257 },
-{ lat: 48.22965, lon: -1.01693 },
-{ lat: 48.22833, lon: -1.02334 },
-{ lat: 48.23060, lon: -1.03444 }
-
-]
-},
-
-{
-name: "D29",
-path: [
-{ lat: 48.29247, lon: -0.94534 },
-{ lat: 48.28069, lon: -0.96231 },
-{ lat: 48.28031, lon: -0.96200 },
-{ lat: 48.28069, lon: -0.96231 },
-{ lat: 48.26331, lon: -0.98708 },
-{ lat: 48.26358, lon: -0.98772 },
-{ lat: 48.26331, lon: -0.98708 },
-{ lat: 48.24223, lon: -1.01692 },
-{ lat: 48.24209, lon: -1.01669 },
-{ lat: 48.24223, lon: -1.01691 },
-{ lat: 48.23321, lon: -1.02964 },
-{ lat: 48.23107, lon: -1.03261 },
-{ lat: 48.23019, lon: -1.03572 },
-{ lat: 48.22931, lon: -1.03590 },
-{ lat: 48.22907, lon: -1.03551 },
-{ lat: 48.22936, lon: -1.03586 },
-{ lat: 48.22270, lon: -1.04129 },
-{ lat: 48.22263, lon: -1.04090 },
-{ lat: 48.22270, lon: -1.04124 },
-{ lat: 48.22250, lon: -1.04516 },
-{ lat: 48.22195, lon: -1.04603 },
-{ lat: 48.22127, lon: -1.04610 },
-{ lat: 48.22057, lon: -1.04576 },
-{ lat: 48.21993, lon: -1.04447 },
-{ lat: 48.21949, lon: -1.04222 },
-{ lat: 48.21906, lon: -1.04107 },
-{ lat: 48.21853, lon: -1.04065 },
-{ lat: 48.21791, lon: -1.04071 },
-{ lat: 48.21764, lon: -1.04121 },
-{ lat: 48.21676, lon: -1.04433 },
-{ lat: 48.21647, lon: -1.04563 },
-{ lat: 48.21580, lon: -1.04640 },
-{ lat: 48.20554, lon: -1.05442 },
-{ lat: 48.20552, lon: -1.05397 },
-{ lat: 48.20553, lon: -1.05443 },
-{ lat: 48.20533, lon: -1.05474 },
-{ lat: 48.20508, lon: -1.05704 },
-{ lat: 48.20522, lon: -1.05747 }
+{ lat: 48.27977, lon: -0.96363 },
+{ lat: 48.28063, lon: -0.96233 },
+{ lat: 48.27267, lon: -0.96288 },
+{ lat: 48.26455, lon: -0.95965 },
+{ lat: 48.25829, lon: -0.96101 },
+{ lat: 48.25509, lon: -0.96422 },
+{ lat: 48.25247, lon: -0.96443 },
+{ lat: 48.25181, lon: -0.96271 },
+{ lat: 48.24604, lon: -0.95814 },
+{ lat: 48.24127, lon: -0.95768 },
+{ lat: 48.23284, lon: -0.95977 },
+{ lat: 48.22758, lon: -0.95820 },
+{ lat: 48.22794, lon: -0.96246 },
+{ lat: 48.22705, lon: -1.00362 },
+{ lat: 48.22806, lon: -1.00872 },
+{ lat: 48.22741, lon: -1.01068 },
+{ lat: 48.22893, lon: -1.01260 },
+{ lat: 48.22967, lon: -1.01761 },
+{ lat: 48.22835, lon: -1.02243 },
+{ lat: 48.22841, lon: -1.02472 },
+{ lat: 48.23059, lon: -1.03445 }
 ]
 },
 {
-name: "D30",
-path: [
-
-{ lat: 48.20491, lon: -1.05721 },
-{ lat: 48.20508, lon: -1.05704 },
-{ lat: 48.20579, lon: -1.05885 },
-{ lat: 48.20593, lon: -1.06018 },
-{ lat: 48.21548, lon: -1.08570 },
-{ lat: 48.21599, lon: -1.08618 }
-]
-},
-{
-name: "D798",
-path: [
-{ lat: 48.21488, lon: -1.08420 },
-{ lat: 48.21548, lon: -1.08570 },
-{ lat: 48.21664, lon: -1.08663 },
-{ lat: 48.21810, lon: -1.08999 },
-{ lat: 48.22070, lon: -1.09274 }
-]
-},
-{
-name: "D209",
-path: [
-{ lat: 48.22062, lon: -1.09300 },
-{ lat: 48.22072, lon: -1.09275 },
-{ lat: 48.25425, lon: -1.12745 },
-{ lat: 48.25769, lon: -1.12723 },
-{ lat: 48.25906, lon: -1.12570 },
-{ lat: 48.26032, lon: -1.13166 },
-{ lat: 48.26665, lon: -1.14231 },
-{ lat: 48.26732, lon: -1.14450 },
-{ lat: 48.26675, lon: -1.14516 },
-{ lat: 48.26574, lon: -1.14746 },
-{ lat: 48.26565, lon: -1.14743 },
-{ lat: 48.26305, lon: -1.14540 },
-{ lat: 48.25899, lon: -1.14299 },
-{ lat: 48.25739, lon: -1.14265 },
-{ lat: 48.25398, lon: -1.14326 },
-{ lat: 48.25145, lon: -1.14487 },
-{ lat: 48.24879, lon: -1.14667 },
-{ lat: 48.24383, lon: -1.15181 },
-{ lat: 48.23951, lon: -1.15479 },
-{ lat: 48.23682, lon: -1.15589 },
-{ lat: 48.22800, lon: -1.15886 },
-{ lat: 48.22799, lon: -1.15924 },
-{ lat: 48.22797, lon: -1.15887 },
-{ lat: 48.22574, lon: -1.15976 },
-{ lat: 48.22453, lon: -1.16072 },
-{ lat: 48.22298, lon: -1.16256 },
-{ lat: 48.22111, lon: -1.16602 },
-{ lat: 48.21948, lon: -1.16854 }
-]
-},
-{
-name: "Chatillon",
-path: [
-{ lat: 48.21874, lon: -1.16962 },
-{ lat: 48.21888, lon: -1.16994 },
-{ lat: 48.21868, lon: -1.16964 },
-{ lat: 48.21576, lon: -1.17283 },
-{ lat: 48.21204, lon: -1.17702 },
-{ lat: 48.20967, lon: -1.17914 },
-{ lat: 48.20739, lon: -1.18026 },
-{ lat: 48.20409, lon: -1.18117 },
-{ lat: 48.20425, lon: -1.18148 },
-{ lat: 48.21995, lon: -1.09195 },
-{ lat: 48.22068, lon: -1.09271 },
-{ lat: 48.22066, lon: -1.09326 },
-{ lat: 48.22131, lon: -1.09535 },
-{ lat: 48.22217, lon: -1.09709 },
-{ lat: 48.22295, lon: -1.10062 },
-{ lat: 48.22362, lon: -1.10286 },
-{ lat: 48.22440, lon: -1.10634 },
-{ lat: 48.22626, lon: -1.11025 },
-{ lat: 48.22756, lon: -1.11403 },
-{ lat: 48.22848, lon: -1.11847 },
-{ lat: 48.22769, lon: -1.11877 },
-{ lat: 48.22727, lon: -1.12045 },
-{ lat: 48.22583, lon: -1.12279 },
-{ lat: 48.22563, lon: -1.12414 },
-{ lat: 48.22519, lon: -1.12538 },
-{ lat: 48.22462, lon: -1.13487 },
-{ lat: 48.22510, lon: -1.13909 },
-{ lat: 48.22520, lon: -1.14462 },
-{ lat: 48.22474, lon: -1.14989 },
-{ lat: 48.22414, lon: -1.15122 },
-{ lat: 48.22426, lon: -1.15373 },
-{ lat: 48.22453, lon: -1.15516 },
-{ lat: 48.22474, lon: -1.15738 },
-{ lat: 48.22475, lon: -1.16127 },
-{ lat: 48.22455, lon: -1.16579 },
-{ lat: 48.22495, lon: -1.16784 },
-{ lat: 48.22494, lon: -1.16908 },
-{ lat: 48.22552, lon: -1.17198 },
-{ lat: 48.22501, lon: -1.17224 },
-{ lat: 48.22371, lon: -1.17394 },
-{ lat: 48.22332, lon: -1.17560 },
-{ lat: 48.22352, lon: -1.17585 },
-{ lat: 48.22306, lon: -1.17746 },
-{ lat: 48.22299, lon: -1.17878 },
-{ lat: 48.22311, lon: -1.18078 },
-{ lat: 48.21816, lon: -1.18299 },
-{ lat: 48.21662, lon: -1.18317 },
-{ lat: 48.21498, lon: -1.18304 },
-{ lat: 48.20758, lon: -1.18233 },
-{ lat: 48.20758, lon: -1.18182 },
-{ lat: 48.20757, lon: -1.18232 },
-{ lat: 48.20555, lon: -1.18208 },
-{ lat: 48.20406, lon: -1.18129 }
-]
-},
-
-		  {
 name: "contour juvigné",
 path: [
-{ lat: 48.24221, lon:-1.016921 },
-{ lat: 48.24161, lon:-1.015837 },
-{ lat: 48.23768, lon:-1.013144 },
-{ lat: 48.23549, lon: -1.01523 },
-{ lat: 48.23187, lon: -1.01678 },
-{ lat: 48.23157, lon:-1.017586 },
-{ lat: 48.23100, lon:-1.017565 },
-{ lat: 48.22957, lon:-1.018090 },
-{ lat: 48.22849, lon:-1.0214812 },
-{ lat: 48.22835, lon: -1.02446 },
-{ lat: 48.22993, lon:-1.031695 },
-{ lat: 48.22844, lon: -1.03196 },
-{ lat: 48.22850, lon:-1.032789 },
-{ lat: 48.22804, lon:-1.033046 },
-{ lat: 48.22824, lon:-1.033465 },
-{ lat: 48.22795, lon:-1.0340232 },
-{ lat: 48.22819, lon:-1.0343236 },
-{ lat: 48.22761, lon: -1.03595 },
-{ lat: 48.22606, lon:-1.036576 },
-{ lat: 48.22514, lon: -1.03746 },
+{ lat: 48.24136, lon: -1.01817 },
+{ lat: 48.24224, lon: -1.01689 },
+{ lat: 48.24161, lon: -1.01582 },
+{ lat: 48.23831, lon: -1.01368 },
+{ lat: 48.23767, lon: -1.01314 },
+{ lat: 48.23658, lon: -1.01438 },
+{ lat: 48.23541, lon: -1.01529 },
+{ lat: 48.23344, lon: -1.01634 },
+{ lat: 48.23182, lon: -1.01682 },
+{ lat: 48.23156, lon: -1.01758 },
+{ lat: 48.23099, lon: -1.01753 },
+{ lat: 48.22956, lon: -1.01807 },
+{ lat: 48.22837, lon: -1.02284 },
+{ lat: 48.22993, lon: -1.03164 },
+{ lat: 48.22843, lon: -1.03195 },
+{ lat: 48.22850, lon: -1.03280 },
+{ lat: 48.22802, lon: -1.03304 },
+{ lat: 48.22825, lon: -1.03344 },
+{ lat: 48.22796, lon: -1.03398 },
+{ lat: 48.22820, lon: -1.03433 },
+{ lat: 48.22764, lon: -1.03596 },
+{ lat: 48.22622, lon: -1.03645 },
+{ lat: 48.22522, lon: -1.03736 },
 { lat: 48.22265, lon: -1.03894 },
-{ lat: 48.22268, lon: -1.04109}
+{ lat: 48.22271, lon: -1.04129 }
 ]
 },
-    {
-      name: "deviation st pierre des landes",
-      path: [
-       { lat: 48.26331, lng: -0.98705 },
-          { lat: 48.26475, lng: -0.99054 },
-          { lat: 48.26529, lng: -0.99298 },
-          { lat: 48.26573, lng: -0.99428 },
-          { lat: 48.26565, lng: -0.99542 },
-          { lat: 48.26533, lng: -0.99648 },
-          { lat: 48.26524, lng: -0.99799 },
-          { lat: 48.26562, lng: -0.99966 },
-          { lat: 48.26918, lng: -1.00906 },
-          { lat: 48.27148, lng: -1.01944 },
-          { lat: 48.27377, lng: -1.02618 },
-		  { lat: 48.27371, lng: -1.02707 },
-		  { lat: 48.27392, lng: -1.02804 }
-      ]
-    }
-  ];
+{
+name: "contour lacet",
+path: [
+{ lat: 48.22813, lon: -1.03680 },
+{ lat: 48.22940, lon: -1.03587 },
+{ lat: 48.22415, lon: -1.02876 },
+{ lat: 48.22038, lon: -1.02968 },
+{ lat: 48.21703, lon: -1.02790 },
+{ lat: 48.20878, lon: -1.02394 },
+{ lat: 48.20384, lon: -1.02438 },
+{ lat: 48.20692, lon: -1.03715 },
+{ lat: 48.20556, lon: -1.05439 },
+{ lat: 48.20530, lon: -1.05465 }
+]
+},
+{
+name: "sortie chatillon",
+path: [
+{ lat: 48.22801, lon: -1.15885 },
+{ lat: 48.22973, lon: -1.15827 },
+{ lat: 48.22748, lon: -1.16112 },
+{ lat: 48.22475, lon: -1.16095 },
+{ lat: 48.22460, lon: -1.16395 }
+]
+},
+{
+name: "déviation st pierre",
+path: [
+{ lat: 48.26205, lon: -0.98882 },
+{ lat: 48.26329, lon: -0.98705 },
+{ lat: 48.26577, lon: -0.99448 },
+{ lat: 48.26528, lon: -0.99846 },
+{ lat: 48.26925, lon: -1.00935 },
+{ lat: 48.27379, lon: -1.02620 },
+{ lat: 48.27375, lon: -1.02770 }
+]
+},
+{
+name: "chatillon",
+path: [
+{ lat: 48.22499, lon: -1.16920 },
+{ lat: 48.22548, lon: -1.17201 },
+{ lat: 48.22331, lon: -1.17561 },
+{ lat: 48.22350, lon: -1.17584 },
+{ lat: 48.22312, lon: -1.18076 },
+{ lat: 48.20759, lon: -1.18233 },
+{ lat: 48.20757, lon: -1.18175 }
+]
+},
+{
+name: "radar dompierre",
+path: [
+{ lat: 48.26846, lon: -1.14958 },
+{ lat: 48.27112, lon: -1.15124 }
+]
+},
+{
+name: "radar N12",
+path: [
+{ lat: 48.32492, lon: -1.09785 },
+{ lat: 48.32948, lon: -1.10176 }
+]
+},
 
-``/* =========================
+    ];
+
+    /* =========================
        GÉO – Utils math / distances / cap
        ========================= */
-
-    const getLon = (p) => (p.lng != null ? p.lng : p.lon);
+    const getLon = (p) => (p && p.lng != null ? p.lng : p && p.lon != null ? p.lon : undefined);
     const DEG = Math.PI / 180;
     const R = 6371000;
 
@@ -393,25 +281,142 @@ path: [
       return normalize180(h2 - h1);
     }
 
+    /* ============================================================
+       PathEngine — Moteur géométrique bidirectionnel
+       ============================================================ */
+    class PathEngine {
+      static R = 6371000;
+      static DEG = Math.PI / 180;
+
+      constructor(path) {
+        this.path = path;
+        this.metrics = this._buildMetrics(path);
+      }
+
+      _metersBetween(A, B) {
+        const lat0 = ((A.lat + B.lat) / 2) * PathEngine.DEG;
+        const dx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
+        const dy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
+        return Math.hypot(dx, dy);
+      }
+
+      _computeHeading(A, B) {
+        const lat0 = ((A.lat + B.lat) / 2) * PathEngine.DEG;
+        const dx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
+        const dy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
+        return (Math.atan2(dx, dy) / PathEngine.DEG + 360) % 360;
+      }
+
+      _buildMetrics(path) {
+        const segLen = [];
+        const segHead = [];
+        const segHeadReverse = [];
+        const cumLen = [0];
+        let totalLen = 0;
+
+        for (let i = 0; i < path.length - 1; i++) {
+          const A = path[i], B = path[i+1];
+
+          const len = this._metersBetween(A, B);
+          segLen.push(len);
+
+          totalLen += len;
+          cumLen.push(totalLen);
+
+          const h = this._computeHeading(A, B);
+          segHead.push(h);
+          segHeadReverse.push((h + 180) % 360);
+        }
+
+        return { path, segLen, segHead, segHeadReverse, cumLen, totalLen };
+      }
+
+      project(pos) {
+        const p = this.metrics.path;
+        let best = { dist: Infinity, index: 0, t: 0 };
+
+        for (let i = 0; i < p.length - 1; i++) {
+          const A = p[i], B = p[i+1];
+
+          const lat0 = A.lat * PathEngine.DEG;
+
+          const ABx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
+          const ABy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
+
+          const APx = (pos.lon - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
+          const APy = (pos.lat - A.lat) * PathEngine.DEG * PathEngine.R;
+
+          const ab2 = ABx*ABx + ABy*ABy;
+          let t = ab2 > 0 ? (APx*ABx + APy*ABy) / ab2 : 0;
+          t = Math.max(0, Math.min(1, t));
+
+          const footx = ABx * t;
+          const footy = ABy * t;
+
+          const dist = Math.hypot(APx - footx, APy - footy);
+
+          if (dist < best.dist)
+            best = { dist, index: i, t };
+        }
+
+        return best;
+      }
+
+      update(pos, course) {
+        const pr = this.project(pos);
+        const m = this.metrics;
+
+        const idx = pr.index;
+        const absProg = m.cumLen[idx] + pr.t * m.segLen[idx];
+
+        const forward = absProg;
+        const backward = m.totalLen - absProg;
+        const bidir = Math.min(forward, backward);
+
+        const headF = m.segHead[idx];
+        const headB = m.segHeadReverse[idx];
+
+        let aligned = headF;
+        if (typeof course === 'number' && isFinite(course)) {
+          const diff = Math.abs(((course - headF + 540) % 360) - 180);
+          aligned = diff <= 90 ? headF : headB;
+        }
+
+        return {
+          index: idx,
+          t: pr.t,
+          dist: pr.dist,
+          forwardProgress: forward,
+          backwardProgress: backward,
+          bidirectionalProgress: bidir,
+          segHeadingAligned: aligned,
+          segHeadingForward: headF,
+          segHeadingBackward: headB
+        };
+      }
+    }
+
     /* =========================
        Pré-calcul des métriques des paths
        ========================= */
+    const pathMetrics = new Map();   // garde ta structure (cumLen/segLen/segHead)
+    const pathEngines = new Map();   // moteur bidirectionnel
 
-    const pathMetrics = new Map();
-
-    function buildMetrics() {
-      paths.forEach(seg => {
+    function buildAllMetrics() {
+      for (const seg of paths) {
         const p = seg.path;
         const segLen = [];
         const cumLen = [0];
         const segHead = [];
+        let totalLen = 0;
 
         for (let i = 0; i < p.length - 1; i++) {
           const a = p[i];
           const b = p[i+1];
           const L = distanceMeters(a.lat, getLon(a), b.lat, getLon(b));
           segLen.push(L);
-          cumLen.push(cumLen[i] + L);
+          totalLen += L;
+          cumLen.push(totalLen);
           segHead.push(bearing(a.lat, getLon(a), b.lat, getLon(b)));
         }
 
@@ -420,61 +425,32 @@ path: [
           segLen,
           cumLen,
           segHead,
+          totalLen,
           name: seg.name
         });
-      });
-    }
 
-    buildMetrics();
+        pathEngines.set(seg.name, new PathEngine(p));
+      }
+    }
+    buildAllMetrics();
 
     /* =========================
-       Projection sur un path
+       Projection sur un path (via PathEngine)
        ========================= */
-
     function projectOnPath(metrics, pos) {
-      const p = metrics.path;
-      let best = { dist: Infinity, index: 0, t: 0 };
-
-      for (let i = 0; i < p.length - 1; i++) {
-        const A = p[i], B = p[i+1];
-        const lat0 = A.lat * DEG;
-
-        const ABx = (getLon(B) - getLon(A)) * DEG * Math.cos(lat0) * R;
-        const ABy = (B.lat - A.lat) * DEG * R;
-        const APx = (pos.lng - getLon(A)) * DEG * Math.cos(lat0) * R;
-        const APy = (pos.lat - A.lat) * DEG * R;
-
-        const ab2 = ABx*ABx + ABy*ABy;
-        let t = ab2 > 0 ? (APx*ABx + APy*ABy) / ab2 : 0;
-        t = Math.max(0, Math.min(1, t));
-
-        const footx = ABx * t;
-        const footy = ABy * t;
-
-        const dist = Math.hypot(APx - footx, APy - footy);
-
-        if (dist < best.dist)
-          best = { dist, index: i, t };
-      }
-
-      const progression =
-        metrics.cumLen[best.index] +
-        best.t * metrics.segLen[best.index];
-
-      const segHeading =
-        metrics.segHead[Math.min(best.index, metrics.segHead.length - 1)];
+      const engine = pathEngines.get(metrics.name);
+      const pr = engine.update({ lat: pos.lat, lon: getLon(pos) }, lastHeading);
 
       return {
-        progress: progression,
-        index: best.index,
-        t: best.t,
-        dist: best.dist,
-        segHeading
+        progress: pr.forwardProgress,             // progression A->B (absolue)
+        index: pr.index,
+        t: pr.t,
+        dist: pr.dist,
+        segHeading: pr.segHeadingAligned          // cap aligné au sens réel si possible
       };
     }
 
-    const turnProgressAt =
-      (metrics, i) => metrics.cumLen[i];
+    const turnProgressAt = (metrics, i) => metrics.cumLen[i];
 
     /* =========================
        Recherche du meilleur virage en fenêtre ±50 m
@@ -510,7 +486,7 @@ path: [
       let best = null;
 
       for (let i = lo; i <= hi; i++) {
-        const ang = turnAngleAt(path, i);
+        const ang = turnAngleAt(path, i);     // signe géométrique (droite/gauche)
         const signed = dirCoeff >= 0 ? ang : -ang;
         const absA = Math.abs(signed);
         if (absA < minAngleDeg) continue;
@@ -545,15 +521,12 @@ path: [
       if (typeof lastHeading === 'number')
         moveHeading = lastHeading;
 
+      // segHeading = cap de segment aligné si heading connu, sinon A->B
       const segHeading = here.segHeading;
-      const dirDelta =
-        angleDiff(moveHeading ?? segHeading, segHeading);
+      const dirDelta = angleDiff(moveHeading ?? segHeading, segHeading);
+      const dirCoeff = Math.cos(dirDelta * DEG) >= 0 ? +1 : -1;
 
-      const dirCoeff =
-        Math.cos(dirDelta * DEG) >= 0 ? +1 : -1;
-
-      const targetProg =
-        here.progress + dirCoeff * v * lookaheadSec;
+      const targetProg = here.progress + dirCoeff * v * lookaheadSec;
 
       const best =
         findTurnNearProgress(metrics,
@@ -564,28 +537,24 @@ path: [
 
       if (!best) return null;
 
-      const remaining =
-        Math.max(0,
-          turnProgressAt(metrics, best.index) -
-          here.progress
-        );
+      const remainingForward = (turnProgressAt(metrics, best.index) - here.progress);
+      const remainingSigned = dirCoeff >= 0 ? remainingForward : -remainingForward;
 
-      const eta = v > 0 ?
-        Math.max(0, (dirCoeff * remaining) / v) :
-        Infinity;
+      const eta = v > 0 ? Math.max(0, remainingSigned / v) : Infinity;
 
       const B = metrics.path[best.index];
 
       return {
         dir: best.angle > 0 ? 'droite' : 'gauche',
         angleDeg: Math.round(best.angle),
-        distance: Math.round(Math.abs(remaining)),
+        distance: Math.round(Math.abs(remainingSigned)),
         etaSec: Math.round(Math.abs(eta)),
         pathName: metrics.name,
         lat: B.lat,
         lon: getLon(B),
         index: best.index,
-        turnProgress: turnProgressAt(metrics, best.index)
+        turnProgress: turnProgressAt(metrics, best.index),
+        dirCoeff
       };
     }
 
@@ -594,28 +563,32 @@ path: [
       const metrics = pathMetrics.get(turn.pathName);
       if (!metrics) return false;
       const here = projectOnPath(metrics, lastPos);
-      return (
-        here.progress >
-        (turn.turnProgress ?? turnProgressAt(metrics, turn.index)) +
-        PASS_EPS_M
-      );
+
+      // passage orienté selon le sens de déplacement au moment de l'annonce
+      if ((turn.dirCoeff ?? +1) >= 0) {
+        return here.progress > (turn.turnProgress + PASS_EPS_M);
+      } else {
+        return here.progress < (turn.turnProgress - PASS_EPS_M);
+      }
     }
 
     function updateActiveTurnETA(turn) {
       const metrics = pathMetrics.get(turn.pathName);
-      if (!metrics || !lastPos)
-        return { distance: null, etaSec: null };
+      if (!metrics || !lastPos) return { distance: null, etaSec: null };
 
       const v = Math.max(0, (lastSpeed || 0) / 3.6);
       const here = projectOnPath(metrics, lastPos);
-      const turnProg =
-        turn.turnProgress ?? turnProgressAt(metrics, turn.index);
+      const turnProg = turn.turnProgress ?? turnProgressAt(metrics, turn.index);
 
-      const remaining = Math.max(0, turnProg - here.progress);
-      const eta = v > 0 ? remaining / v : Infinity;
+      const dir = (turn.dirCoeff ?? +1) >= 0 ? +1 : -1;
+      const remainingSigned = dir >= 0 ? (turnProg - here.progress)
+                                       : (here.progress - turnProg);
+
+      const distance = Math.max(0, remainingSigned);
+      const eta = v > 0 ? distance / v : Infinity;
 
       return {
-        distance: Math.round(remaining),
+        distance: Math.round(distance),
         etaSec: Math.round(eta)
       };
     }
@@ -659,12 +632,12 @@ path: [
       qs('#next').textContent="—";
       setIcon("images/droit.png");
     }
-	/* =========================
-       processGps(gps) — votre logique interne
+
+    /* =========================
+       processGps(gps) — logique interne
        ========================= */
     function processGps(gps) {
-
-      // Cap (si fourni par le flux), fallback via prev→current
+      // Cap (si fourni), sinon fallback via prev -> current
       if (typeof gps.heading === 'number' && isFinite(gps.heading)) {
         lastHeading = ((gps.heading % 360) + 360) % 360;
       } else if (prevPos) {
@@ -741,7 +714,8 @@ path: [
           lon: best.lon,
           dir: best.dir,
           angleDeg: best.angleDeg,
-          turnProgress: best.turnProgress
+          turnProgress: best.turnProgress,
+          dirCoeff: best.dirCoeff
         };
 
         setStatus(
@@ -767,19 +741,18 @@ path: [
     }
 
     /* =========================
-       nearestSnapDist
+       nearestSnapDist (via PathEngine)
        ========================= */
     function nearestSnapDist(pos) {
       let best = Infinity;
 
-      for (const pm of pathMetrics.values()) {
-        const prj = projectOnPath(pm, pos);
-        best = Math.min(best, prj.dist);
+      for (const [name, engine] of pathEngines) {
+        const pr = engine.update({ lat: pos.lat, lon: pos.lng }, lastHeading);
+        best = Math.min(best, pr.dist);
       }
 
       return best;
     }
-
   </script>
 </body>
 </html>
