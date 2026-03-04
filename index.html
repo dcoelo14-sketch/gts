@@ -43,7 +43,7 @@
     }
     footer { padding: 10px 14px; color:#666; font-size: 13px; }
     .night footer { color:#aaa; }
-    #next { font-size: 40px; }
+    #next, #speed, #status { font-size: 30px; }
     * { -webkit-tap-highlight-color: transparent; user-select: none; }
   </style>
 </head>
@@ -53,7 +53,7 @@
   <div class="panel">
     <div class="row"><strong id="wsState">GPS natif</strong></div>
     <div class="row">Statut : <span id="status" class="ko">En attente…</span></div>
-    <div class="row">Vitesse : <span id="speed">-- km/h</span></div>
+    <div class="row">Vitesse : <strong><span id="speed">-- km/h</span></strong></div>
     <div class="row">Prochain : <strong><span id="next">—</span></strong></div>
   </div>
 
@@ -70,689 +70,328 @@
   <footer>Sans carte, uniquement paths &amp; virages. Lookahead robuste, anti‑clignotement.</footer>
 
   <script>
-    /* =========================
-       Helpers UI
-       ========================= */
-    const qs = (sel) => document.querySelector(sel);
-    function setIcon(src){ qs('#icon').src = src; }
-    function setStatus(txt, cls){
-      const el = qs('#status');
-      el.textContent = txt;
-      el.className = cls === 'ok' ? 'ok' : 'ko';
-    }
-    function setSpeed(kmh){
-      qs('#speed').textContent =
-        isFinite(kmh) ? `${kmh.toFixed(0)} km/h` : '-- km/h';
-    }
-    function toggleNight(){ document.body.classList.toggle('night'); }
 
-    /* =========================
-       État global & paramètres
-       ========================= */
-    let prevPos = null;
-    let lastPos = null;
-    let lastSpeed = 0;
-    let lastFixTs = null;
-    let lastHeading = null;
+/* ============================================================
+   UI HELPERS (inchangé)
+   ============================================================ */
 
-    const LOOKAHEAD_SEC = 3;
-    const MIN_TURN_DEG = 10;
-    const PASS_EPS_M   = 5;
-    const COOLDOWN_MS  = 4000;
-    const MAX_SNAP_M   = 15;
-    const WINDOW_M     = 50;
+const qs = (sel) => document.querySelector(sel);
 
-    let activeTurn = null;
-    let suppress = { until: 0, pathName: null, index: null };
+function setIcon(src) { qs('#icon').src = src; }
 
-    /* =========================
-       Vos PATHS (repris intégralement)
-       ========================= */
-    const paths = [
-   {
-name: "chailland",
-path: [
-{ lat: 48.27977, lon: -0.96363 },
-{ lat: 48.28063, lon: -0.96233 },
-{ lat: 48.27267, lon: -0.96288 },
-{ lat: 48.26455, lon: -0.95965 },
-{ lat: 48.25829, lon: -0.96101 },
-{ lat: 48.25509, lon: -0.96422 },
-{ lat: 48.25247, lon: -0.96443 },
-{ lat: 48.25181, lon: -0.96271 },
-{ lat: 48.24604, lon: -0.95814 },
-{ lat: 48.24127, lon: -0.95768 },
-{ lat: 48.23284, lon: -0.95977 },
-{ lat: 48.22758, lon: -0.95820 },
-{ lat: 48.22794, lon: -0.96246 },
-{ lat: 48.22705, lon: -1.00362 },
-{ lat: 48.22806, lon: -1.00872 },
-{ lat: 48.22741, lon: -1.01068 },
-{ lat: 48.22893, lon: -1.01260 },
-{ lat: 48.22967, lon: -1.01761 },
-{ lat: 48.22835, lon: -1.02243 },
-{ lat: 48.22841, lon: -1.02472 },
-{ lat: 48.23059, lon: -1.03445 }
-]
-},
-{
-name: "contour juvigné",
-path: [
-{ lat: 48.24136, lon: -1.01817 },
-{ lat: 48.24224, lon: -1.01689 },
-{ lat: 48.24161, lon: -1.01582 },
-{ lat: 48.23831, lon: -1.01368 },
-{ lat: 48.23767, lon: -1.01314 },
-{ lat: 48.23658, lon: -1.01438 },
-{ lat: 48.23541, lon: -1.01529 },
-{ lat: 48.23344, lon: -1.01634 },
-{ lat: 48.23182, lon: -1.01682 },
-{ lat: 48.23156, lon: -1.01758 },
-{ lat: 48.23099, lon: -1.01753 },
-{ lat: 48.22956, lon: -1.01807 },
-{ lat: 48.22837, lon: -1.02284 },
-{ lat: 48.22993, lon: -1.03164 },
-{ lat: 48.22843, lon: -1.03195 },
-{ lat: 48.22850, lon: -1.03280 },
-{ lat: 48.22802, lon: -1.03304 },
-{ lat: 48.22825, lon: -1.03344 },
-{ lat: 48.22796, lon: -1.03398 },
-{ lat: 48.22820, lon: -1.03433 },
-{ lat: 48.22764, lon: -1.03596 },
-{ lat: 48.22622, lon: -1.03645 },
-{ lat: 48.22522, lon: -1.03736 },
-{ lat: 48.22265, lon: -1.03894 },
-{ lat: 48.22271, lon: -1.04129 }
-]
-},
-{
-name: "contour lacet",
-path: [
-{ lat: 48.22813, lon: -1.03680 },
-{ lat: 48.22940, lon: -1.03587 },
-{ lat: 48.22415, lon: -1.02876 },
-{ lat: 48.22038, lon: -1.02968 },
-{ lat: 48.21703, lon: -1.02790 },
-{ lat: 48.20878, lon: -1.02394 },
-{ lat: 48.20384, lon: -1.02438 },
-{ lat: 48.20692, lon: -1.03715 },
-{ lat: 48.20556, lon: -1.05439 },
-{ lat: 48.20530, lon: -1.05465 }
-]
-},
-{
-name: "sortie chatillon",
-path: [
-{ lat: 48.22801, lon: -1.15885 },
-{ lat: 48.22973, lon: -1.15827 },
-{ lat: 48.22748, lon: -1.16112 },
-{ lat: 48.22475, lon: -1.16095 },
-{ lat: 48.22460, lon: -1.16395 }
-]
-},
-{
-name: "déviation st pierre",
-path: [
-{ lat: 48.26205, lon: -0.98882 },
-{ lat: 48.26329, lon: -0.98705 },
-{ lat: 48.26577, lon: -0.99448 },
-{ lat: 48.26528, lon: -0.99846 },
-{ lat: 48.26925, lon: -1.00935 },
-{ lat: 48.27379, lon: -1.02620 },
-{ lat: 48.27375, lon: -1.02770 }
-]
-},
-{
-name: "chatillon",
-path: [
-{ lat: 48.22499, lon: -1.16920 },
-{ lat: 48.22548, lon: -1.17201 },
-{ lat: 48.22331, lon: -1.17561 },
-{ lat: 48.22350, lon: -1.17584 },
-{ lat: 48.22312, lon: -1.18076 },
-{ lat: 48.20759, lon: -1.18233 },
-{ lat: 48.20757, lon: -1.18175 }
-]
-},
-{
-name: "radar dompierre",
-path: [
-{ lat: 48.26846, lon: -1.14958 },
-{ lat: 48.27112, lon: -1.15124 }
-]
-},
-{
-name: "radar N12",
-path: [
-{ lat: 48.32492, lon: -1.09785 },
-{ lat: 48.32948, lon: -1.10176 }
-]
-},
+function setStatus(txt, cls) {
+    const el = qs('#status');
+    el.textContent = txt;
+    el.className = cls === "ok" ? "ok" : "ko";
+}
 
-    ];
+function setSpeed(kmh) {
+    qs('#speed').textContent =
+        isFinite(kmh) ? `${kmh.toFixed(0)} km/h` : "-- km/h";
+}
 
-    /* =========================
-       GÉO – Utils math / distances / cap
-       ========================= */
-    const getLon = (p) => (p && p.lng != null ? p.lng : p && p.lon != null ? p.lon : undefined);
-    const DEG = Math.PI / 180;
-    const R = 6371000;
+function toggleNight() {
+    document.body.classList.toggle('night');
+}
 
-    function distanceMeters(lat1, lon1, lat2, lon2) {
-      const dLat = (lat2 - lat1) * DEG;
-      const dLon = (lon2 - lon1) * DEG;
-      const a = Math.sin(dLat/2)**2 +
-                Math.cos(lat1*DEG) * Math.cos(lat2*DEG) *
-                Math.sin(dLon/2)**2;
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+/* ============================================================
+   GEO UTILS
+   ============================================================ */
+
+const DEG = Math.PI / 180;
+const R = 6371000;
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+    const dLat = (lat2 - lat1) * DEG;
+    const dLon = (lon2 - lon1) * DEG;
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * DEG) * Math.cos(lat2 * DEG) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function bearing(lat1, lon1, lat2, lon2) {
+    const dLon = (lon2 - lon1) * DEG;
+    const l1 = lat1 * DEG;
+    const l2 = lat2 * DEG;
+
+    const y = Math.sin(dLon) * Math.cos(l2);
+    const x =
+        Math.cos(l1) * Math.sin(l2) -
+        Math.sin(l1) * Math.cos(l2) * Math.cos(dLon);
+
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function normalize180(a) {
+    return ((a + 180) % 360 + 360) % 360 - 180;
+}
+
+function angleDiff(a, b) {
+    let d = ((a - b + 540) % 360) - 180;
+    return d;
+}
+
+/* ============================================================
+   CIRCLE ENGINE PRO – Option 3 (COMPLET)
+   ============================================================ */
+
+/*
+   FORMAT A attendu :
+   const circles = [
+       {
+         name: "rondpoint_superu",
+         lat: 48.1234,
+         lng: -1.2345,
+         radius: 25,
+
+         // OPTIONNEL → Zones directionnelles (en degrés)
+         entryMin:  80,   // entrée autorisée dès 80°
+         entryMax: 160,   // entrée jusqu'à 160°
+         exitMin:  200,
+         exitMax: 260
+       }
+	   
+   ];
+*/
+
+const circles = [
+   // === EXEMPLES, à remplacer par les tiens ===
+  // { name: "rondpoint_test", lat: 48.29589, lng: -0.92670, radius: 50},
+   
+	 {name: "Bifurcation", lat: 48.21999, lng: -1.09198, radius: 120},
+	 {name: "rond point cerf", lat: 48.29000, lng: -0.52670,  radius: 70},
+	 {name: "feu", lat: 48.29694, lng: -0.93666, radius: 60},
+	 {name: "Rond Point Belle Epoque", lat: 48.29768, lng: -0.93474, radius: 60},
+	 {name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50},
+	 {name: "direction vitré", lat: 48.29702, lng: -0.93928, radius: 80},
+	 {name: "deviation chailland", lat: 48.28065, lng: -0.96229, radius: 200},
+	 {name: "deviation st pierre", lat: 48.26329, lng: -0.98710, radius: 200},
+	 {name: "contour juvigne", lat: 48.24223, lng: -1.01691, radius: 200}
+	 
+];
+
+/* ---- Calcul distance au centre ---- */
+function circleDistance(c, pos) {
+    return distanceMeters(c.lat, c.lng, pos.lat, pos.lng);
+}
+
+/* ---- Vitesse / ETA ---- */
+function circleETA(c, pos, speedKmh) {
+    const v = Math.max(0, speedKmh / 3.6);
+    if (v < 0.3) return Infinity;
+
+    const d = circleDistance(c, pos) - c.radius;
+    return d > 0 ? d / v : 0;
+}
+
+/* ---- Vérifie entrée directionnelle (optionnelle) ---- */
+function isDirectionalEntryAllowed(c, heading) {
+    if (c.entryMin == null) return true;
+
+    const h = heading % 360;
+    return (
+        (c.entryMin <= c.entryMax && h >= c.entryMin && h <= c.entryMax) ||
+        (c.entryMin > c.entryMax  && (h >= c.entryMin || h <= c.entryMax))
+    );
+}
+
+/* ---- Vérifie sortie directionnelle ---- */
+function isDirectionalExitAllowed(c, heading) {
+    if (c.exitMin == null) return true;
+
+    const h = heading % 360;
+    return (
+        (c.exitMin <= c.exitMax && h >= c.exitMin && h <= c.exitMax) ||
+        (c.exitMin > c.exitMax  && (h >= c.exitMin || h <= c.exitMax))
+    );
+}
+
+let activeCircle = null;
+let suppress = { until: 0, name: null };
+
+/* ---- Détection du prochain cercle utile ---- */
+function detectUpcomingCircle(pos, speedKmh, heading) {
+    let best = null;
+
+    for (const c of circles) {
+
+        if (Date.now() < suppress.until && suppress.name === c.name)
+            continue;
+
+        const dist = circleDistance(c, pos);
+        const eta  = circleETA(c, pos, speedKmh);
+
+        // On ignore si trop proche du centre
+        if (dist < c.radius - 5) continue;
+
+        // Vérifie si on se dirige vers la zone d'entrée
+        if (!isDirectionalEntryAllowed(c, heading)) continue;
+
+        if (!best || eta < best.eta)
+            best = { circle: c, dist, eta };
     }
 
-    function bearing(lat1, lon1, lat2, lon2){
-      const dLon = (lon2 - lon1) * DEG;
-      lat1 *= DEG; lat2 *= DEG;
-      const y = Math.sin(dLon) * Math.cos(lat2);
-      const x = Math.cos(lat1)*Math.sin(lat2) -
-                Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
-      return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+    return best;
+}
+
+/* ============================================================
+   GPS + LOGIQUE TEMPS RÉEL
+   ============================================================ */
+
+let lastPos = null;
+let prevPos = null;
+let lastFixTs = null;
+let lastSpeed = 0;
+let lastHeading = null;
+
+/* ---- Lissage vitesse ---- */
+function smoothSpeed(s) {
+    lastSpeed = lastSpeed * 0.6 + s * 0.4;
+    return lastSpeed;
+}
+
+/* ---- TRAITEMENT GPS ---- */
+function processGps(gps) {
+
+    /* --- MAJ cap --- */
+    if (isFinite(gps.heading)) {
+        lastHeading = (gps.heading + 360) % 360;
+    } else if (prevPos) {
+        const hdg = bearing(prevPos.lat, prevPos.lng, gps.lat, gps.lng);
+        if (isFinite(hdg)) lastHeading = hdg;
     }
 
-    function normalize180(a) {
-      return ((a + 180) % 360 + 360) % 360 - 180;
+    /* --- MAJ vitesse --- */
+    const now = Date.now();
+
+    if (isFinite(gps.speedKmh)) {
+        setSpeed(smoothSpeed(gps.speedKmh));
+    } else if (lastPos && lastFixTs) {
+        const dt = (now - lastFixTs) / 1000;
+        const d  = distanceMeters(lastPos.lat, lastPos.lng, gps.lat, gps.lng);
+        const v  = dt > 0 ? d / dt : 0;
+        setSpeed(smoothSpeed(Math.min(v, 80) * 3.6));
     }
 
-    function angleDiff(a, b) {
-      let d = ((a - b + 540) % 360) - 180;
-      return d;
-    }
+    prevPos    = lastPos;
+    lastPos    = { lat: gps.lat, lng: gps.lng };
+    lastFixTs  = now;
 
-    function smoothSpeed(s){
-      if (s == null) return lastSpeed;
-      lastSpeed = lastSpeed * 0.6 + s * 0.4;
-      return lastSpeed;
-    }
+    const pos = lastPos;
+    const vKmh = lastSpeed;
+    const hdg = lastHeading ?? 0;
 
-    function turnAngleAt(path, i) {
-      if (i <= 0 || i >= path.length - 1) return 0;
-      const A = path[i - 1];
-      const B = path[i];
-      const C = path[i + 1];
-      const h1 = bearing(A.lat, getLon(A), B.lat, getLon(B));
-      const h2 = bearing(B.lat, getLon(B), C.lat, getLon(C));
-      return normalize180(h2 - h1);
-    }
+    /* ====================================================
+       1) Si un cercle est actif → gérer entrée/sortie
+       ==================================================== */
+    if (activeCircle) {
 
-    /* ============================================================
-       PathEngine — Moteur géométrique bidirectionnel
-       ============================================================ */
-    class PathEngine {
-      static R = 6371000;
-      static DEG = Math.PI / 180;
+        const dist = circleDistance(activeCircle, pos);
 
-      constructor(path) {
-        this.path = path;
-        this.metrics = this._buildMetrics(path);
-      }
+        // → sortie ?
+        if (dist > activeCircle.radius + 10) {
 
-      _metersBetween(A, B) {
-        const lat0 = ((A.lat + B.lat) / 2) * PathEngine.DEG;
-        const dx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
-        const dy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
-        return Math.hypot(dx, dy);
-      }
+            // Vérifie si sortie directionnelle OK
+            if (isDirectionalExitAllowed(activeCircle, hdg)) {
 
-      _computeHeading(A, B) {
-        const lat0 = ((A.lat + B.lat) / 2) * PathEngine.DEG;
-        const dx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
-        const dy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
-        return (Math.atan2(dx, dy) / PathEngine.DEG + 360) % 360;
-      }
+                setStatus(
+                    `Sorti de la zone "${activeCircle.name}"`,
+                    'ok'
+                );
+                setIcon("images/sortie.png");
 
-      _buildMetrics(path) {
-        const segLen = [];
-        const segHead = [];
-        const segHeadReverse = [];
-        const cumLen = [0];
-        let totalLen = 0;
+                suppress = {
+                    until: Date.now() + 4000,
+                    name : activeCircle.name
+                };
 
-        for (let i = 0; i < path.length - 1; i++) {
-          const A = path[i], B = path[i+1];
-
-          const len = this._metersBetween(A, B);
-          segLen.push(len);
-
-          totalLen += len;
-          cumLen.push(totalLen);
-
-          const h = this._computeHeading(A, B);
-          segHead.push(h);
-          segHeadReverse.push((h + 180) % 360);
+                activeCircle = null;
+                qs("#next").textContent = "—";
+                return;
+            }
         }
 
-        return { path, segLen, segHead, segHeadReverse, cumLen, totalLen };
-      }
-
-      project(pos) {
-        const p = this.metrics.path;
-        let best = { dist: Infinity, index: 0, t: 0 };
-
-        for (let i = 0; i < p.length - 1; i++) {
-          const A = p[i], B = p[i+1];
-
-          const lat0 = A.lat * PathEngine.DEG;
-
-          const ABx = (getLon(B) - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
-          const ABy = (B.lat - A.lat) * PathEngine.DEG * PathEngine.R;
-
-          const APx = (pos.lon - getLon(A)) * PathEngine.DEG * Math.cos(lat0) * PathEngine.R;
-          const APy = (pos.lat - A.lat) * PathEngine.DEG * PathEngine.R;
-
-          const ab2 = ABx*ABx + ABy*ABy;
-          let t = ab2 > 0 ? (APx*ABx + APy*ABy) / ab2 : 0;
-          t = Math.max(0, Math.min(1, t));
-
-          const footx = ABx * t;
-          const footy = ABy * t;
-
-          const dist = Math.hypot(APx - footx, APy - footy);
-
-          if (dist < best.dist)
-            best = { dist, index: i, t };
-        }
-
-        return best;
-      }
-
-      update(pos, course) {
-        const pr = this.project(pos);
-        const m = this.metrics;
-
-        const idx = pr.index;
-        const absProg = m.cumLen[idx] + pr.t * m.segLen[idx];
-
-        const forward = absProg;
-        const backward = m.totalLen - absProg;
-        const bidir = Math.min(forward, backward);
-
-        const headF = m.segHead[idx];
-        const headB = m.segHeadReverse[idx];
-
-        let aligned = headF;
-        if (typeof course === 'number' && isFinite(course)) {
-          const diff = Math.abs(((course - headF + 540) % 360) - 180);
-          aligned = diff <= 90 ? headF : headB;
-        }
-
-        return {
-          index: idx,
-          t: pr.t,
-          dist: pr.dist,
-          forwardProgress: forward,
-          backwardProgress: backward,
-          bidirectionalProgress: bidir,
-          segHeadingAligned: aligned,
-          segHeadingForward: headF,
-          segHeadingBackward: headB
-        };
-      }
+        // Sinon on est dedans
+        setStatus(`Dans "${activeCircle.name}"`, 'ok');
+        setIcon("images/zone.png");
+        qs("#next").textContent = `${Math.round(dist)} m`;
+        return;
     }
 
-    /* =========================
-       Pré-calcul des métriques des paths
-       ========================= */
-    const pathMetrics = new Map();   // garde ta structure (cumLen/segLen/segHead)
-    const pathEngines = new Map();   // moteur bidirectionnel
+    /* ====================================================
+       2) Aucun cercle actif → détecter une approche
+       ==================================================== */
 
-    function buildAllMetrics() {
-      for (const seg of paths) {
-        const p = seg.path;
-        const segLen = [];
-        const cumLen = [0];
-        const segHead = [];
-        let totalLen = 0;
+    const next = detectUpcomingCircle(pos, vKmh, hdg);
 
-        for (let i = 0; i < p.length - 1; i++) {
-          const a = p[i];
-          const b = p[i+1];
-          const L = distanceMeters(a.lat, getLon(a), b.lat, getLon(b));
-          segLen.push(L);
-          totalLen += L;
-          cumLen.push(totalLen);
-          segHead.push(bearing(a.lat, getLon(a), b.lat, getLon(b)));
-        }
+    if (next) {
+        const c = next.circle;
 
-        pathMetrics.set(seg.name, {
-          path: p,
-          segLen,
-          cumLen,
-          segHead,
-          totalLen,
-          name: seg.name
-        });
+        activeCircle = c;
 
-        pathEngines.set(seg.name, new PathEngine(p));
-      }
-    }
-    buildAllMetrics();
+        setStatus(
+            `Approche "${c.name}"`, // (~${Math.round(next.dist)} m, ~${Math.round(next.eta)} s),
+            'ok'
+        );
+        setIcon("images/danger.png");
 
-    /* =========================
-       Projection sur un path (via PathEngine)
-       ========================= */
-    function projectOnPath(metrics, pos) {
-      const engine = pathEngines.get(metrics.name);
-      const pr = engine.update({ lat: pos.lat, lon: getLon(pos) }, lastHeading);
+        qs('#next').textContent =
+            `${Math.round(next.dist)} m • ${Math.round(next.eta)} s`;
 
-      return {
-        progress: pr.forwardProgress,             // progression A->B (absolue)
-        index: pr.index,
-        t: pr.t,
-        dist: pr.dist,
-        segHeading: pr.segHeadingAligned          // cap aligné au sens réel si possible
-      };
+        return;
     }
 
-    const turnProgressAt = (metrics, i) => metrics.cumLen[i];
+    /* ====================================================
+       3) Aucune zone utile
+       ==================================================== */
+    setStatus("Aucune zone détectée", "ko");
+    setIcon("images/droit.png");
+    qs('#next').textContent = "—";
+}
 
-    /* =========================
-       Recherche du meilleur virage en fenêtre ±50 m
-       ========================= */
 
-    function lowerBound(arr, x) {
-      let l=0, r=arr.length;
-      while(l<r){
-        const m = (l+r>>1);
-        if (arr[m] < x) l = m+1;
-        else r = m;
-      }
-      return l;
-    }
+/* ============================================================
+   GPS REAL API
+   ============================================================ */
 
-    function upperBound(arr, x) {
-      let l=0, r=arr.length;
-      while(l<r){
-        const m = (l+r>>1);
-        if (arr[m] <= x) l = m+1;
-        else r = m;
-      }
-      return l-1;
-    }
+let watchId = null;
 
-    function findTurnNearProgress(metrics, targetProg, windowM, minAngleDeg, dirCoeff) {
-      const { path, cumLen } = metrics;
-      const n = path.length;
-
-      const lo = Math.max(1, lowerBound(cumLen, targetProg - windowM));
-      const hi = Math.min(n - 2, upperBound(cumLen, targetProg + windowM));
-
-      let best = null;
-
-      for (let i = lo; i <= hi; i++) {
-        const ang = turnAngleAt(path, i);     // signe géométrique (droite/gauche)
-        const signed = dirCoeff >= 0 ? ang : -ang;
-        const absA = Math.abs(signed);
-        if (absA < minAngleDeg) continue;
-
-        const centerDist = Math.abs(cumLen[i] - targetProg);
-        const score = absA - (centerDist * 0.15);
-
-        if (!best || score > best.score)
-          best = { index: i, angle: signed, centerDist, score };
-      }
-
-      return best;
-    }
-
-    function computeUpcomingTurn(pathObj,
-                                 lookaheadSec = LOOKAHEAD_SEC,
-                                 minAngleDeg = MIN_TURN_DEG,
-                                 windowM = WINDOW_M)
-    {
-      if (!lastPos) return null;
-
-      const metrics = pathMetrics.get(pathObj.name);
-      if (!metrics || metrics.path.length < 3) return null;
-
-      const v = Math.max(0, (lastSpeed || 0) / 3.6);
-      if (v < 0.5) return null;
-
-      const here = projectOnPath(metrics, lastPos);
-      if (here.dist > MAX_SNAP_M) return null;
-
-      let moveHeading = null;
-      if (typeof lastHeading === 'number')
-        moveHeading = lastHeading;
-
-      // segHeading = cap de segment aligné si heading connu, sinon A->B
-      const segHeading = here.segHeading;
-      const dirDelta = angleDiff(moveHeading ?? segHeading, segHeading);
-      const dirCoeff = Math.cos(dirDelta * DEG) >= 0 ? +1 : -1;
-
-      const targetProg = here.progress + dirCoeff * v * lookaheadSec;
-
-      const best =
-        findTurnNearProgress(metrics,
-                             targetProg,
-                             windowM,
-                             minAngleDeg,
-                             dirCoeff);
-
-      if (!best) return null;
-
-      const remainingForward = (turnProgressAt(metrics, best.index) - here.progress);
-      const remainingSigned = dirCoeff >= 0 ? remainingForward : -remainingForward;
-
-      const eta = v > 0 ? Math.max(0, remainingSigned / v) : Infinity;
-
-      const B = metrics.path[best.index];
-
-      return {
-        dir: best.angle > 0 ? 'droite' : 'gauche',
-        angleDeg: Math.round(best.angle),
-        distance: Math.round(Math.abs(remainingSigned)),
-        etaSec: Math.round(Math.abs(eta)),
-        pathName: metrics.name,
-        lat: B.lat,
-        lon: getLon(B),
-        index: best.index,
-        turnProgress: turnProgressAt(metrics, best.index),
-        dirCoeff
-      };
-    }
-
-    function hasPassedTurnByProgress(turn) {
-      if (!turn || !lastPos) return false;
-      const metrics = pathMetrics.get(turn.pathName);
-      if (!metrics) return false;
-      const here = projectOnPath(metrics, lastPos);
-
-      // passage orienté selon le sens de déplacement au moment de l'annonce
-      if ((turn.dirCoeff ?? +1) >= 0) {
-        return here.progress > (turn.turnProgress + PASS_EPS_M);
-      } else {
-        return here.progress < (turn.turnProgress - PASS_EPS_M);
-      }
-    }
-
-    function updateActiveTurnETA(turn) {
-      const metrics = pathMetrics.get(turn.pathName);
-      if (!metrics || !lastPos) return { distance: null, etaSec: null };
-
-      const v = Math.max(0, (lastSpeed || 0) / 3.6);
-      const here = projectOnPath(metrics, lastPos);
-      const turnProg = turn.turnProgress ?? turnProgressAt(metrics, turn.index);
-
-      const dir = (turn.dirCoeff ?? +1) >= 0 ? +1 : -1;
-      const remainingSigned = dir >= 0 ? (turnProg - here.progress)
-                                       : (here.progress - turnProg);
-
-      const distance = Math.max(0, remainingSigned);
-      const eta = v > 0 ? distance / v : Infinity;
-
-      return {
-        distance: Math.round(distance),
-        etaSec: Math.round(eta)
-      };
-    }
-
-    /* =========================
-       GPS RÉEL – Geolocation API
-       ========================= */
-
-    let watchId = null;
-
-    function startTracking() {
-      if (!navigator.geolocation) {
+function startTracking() {
+    if (!navigator.geolocation) {
         setStatus("GPS non supporté", "ko");
         return;
-      }
+    }
 
-      setStatus("Acquisition GPS…", "ok");
+    setStatus("Acquisition GPS…", "ok");
 
-      watchId = navigator.geolocation.watchPosition(
+    watchId = navigator.geolocation.watchPosition(
         (pos) => {
-          const c = pos.coords;
-          const gps = {
-            lat: c.latitude,
-            lon: c.longitude,
-            speedKmh: c.speed != null ? c.speed * 3.6 : null,
-            heading: c.heading
-          };
-          processGps(gps);
+            const c = pos.coords;
+            processGps({
+                lat: c.latitude,
+                lng: c.longitude,
+                speedKmh: (c.speed != null ? c.speed * 3.6 : null),
+                heading: c.heading
+            });
         },
         (err) => setStatus("Erreur GPS : " + err.message, "ko"),
         { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-      );
-    }
+    );
+}
 
-    function stopTracking(){
-      if (watchId !== null)
+function stopTracking() {
+    if (watchId !== null)
         navigator.geolocation.clearWatch(watchId);
 
-      watchId = null;
-      setStatus("GPS arrêté.","ko");
-      qs('#next').textContent="—";
-      setIcon("images/droit.png");
-    }
+    watchId = null;
+    setStatus("GPS arrêté", "ko");
+    qs("#next").textContent = "—";
+    setIcon("images/droit.png");
+}
 
-    /* =========================
-       processGps(gps) — logique interne
-       ========================= */
-    function processGps(gps) {
-      // Cap (si fourni), sinon fallback via prev -> current
-      if (typeof gps.heading === 'number' && isFinite(gps.heading)) {
-        lastHeading = ((gps.heading % 360) + 360) % 360;
-      } else if (prevPos) {
-        const hdg = bearing(prevPos.lat, prevPos.lng, gps.lat, gps.lon);
-        if (isFinite(hdg)) lastHeading = hdg;
-      }
-
-      // Vitesse — flux direct sinon estimation
-      const now = Date.now();
-      if (typeof gps.speedKmh === 'number') {
-        setSpeed(smoothSpeed(gps.speedKmh));
-      } else if (lastPos && lastFixTs) {
-        const dt = (now - lastFixTs) / 1000;
-        const d = distanceMeters(lastPos.lat, lastPos.lng, gps.lat, gps.lon);
-        const vms = dt > 0 ? d / dt : 0;
-        const vClamped = Math.min(vms, 80); // clamp anti pics
-        setSpeed(smoothSpeed(vClamped * 3.6));
-      }
-
-      prevPos = lastPos;
-      lastPos = { lat: gps.lat, lng: gps.lon };
-      lastFixTs = now;
-
-      // 1) Si virage actif -> maintenir jusqu'au passage
-      if (activeTurn) {
-        if (hasPassedTurnByProgress(activeTurn)) {
-          setStatus(
-            `Virage ${activeTurn.dir.toUpperCase()} passé sur "${activeTurn.pathName}"`,
-            'ok'
-          );
-          setIcon('images/droit.png');
-          suppress = {
-            until: Date.now() + COOLDOWN_MS,
-            pathName: activeTurn.pathName,
-            index: activeTurn.index
-          };
-          activeTurn = null;
-          qs('#next').textContent = '—';
-          return;
-        } else {
-          const upd = updateActiveTurnETA(activeTurn);
-          setStatus(
-            `Virage ${activeTurn.dir.toUpperCase()} (~${upd.distance} m, ~${upd.etaSec} s, ${activeTurn.angleDeg}°) sur "${activeTurn.pathName}"`,
-            'ok'
-          );
-          setIcon(activeTurn.dir === 'droite' ? 'images/droite.png' : 'images/gauche.png');
-          qs('#next').textContent = `${upd.distance} m • ${upd.etaSec} s`;
-          return;
-        }
-      }
-
-      // 2) Pas de virage actif -> cherche le prochain
-      let best = null;
-
-      for (const p of paths) {
-        const cand = computeUpcomingTurn(p, LOOKAHEAD_SEC, MIN_TURN_DEG, WINDOW_M);
-        if (!cand) continue;
-
-        const inCooldown =
-          (Date.now() < suppress.until) &&
-          (cand.pathName === suppress.pathName) &&
-          (cand.index === suppress.index);
-
-        if (inCooldown) continue;
-        if (!best || cand.etaSec < best.etaSec) best = cand;
-      }
-
-      // Trouvé → activer le virage
-      if (best) {
-        activeTurn = {
-          pathName: best.pathName,
-          index: best.index,
-          lat: best.lat,
-          lon: best.lon,
-          dir: best.dir,
-          angleDeg: best.angleDeg,
-          turnProgress: best.turnProgress,
-          dirCoeff: best.dirCoeff
-        };
-
-        setStatus(
-          `Virage ${best.dir.toUpperCase()} (~${best.distance} m, ~${best.etaSec} s, ${best.angleDeg}°) sur "${best.pathName}"`,
-          'ok'
-        );
-        setIcon(best.dir === 'droite' ? 'images/droite.png' : 'images/gauche.png');
-        qs('#next').textContent = `${best.distance} m • ${best.etaSec} s`;
-      }
-
-      // Aucun virage + hors route ?
-      else {
-        const nearAny = nearestSnapDist(lastPos) <= MAX_SNAP_M;
-
-        if (!nearAny)
-          setStatus('Hors du tracé (aucune détection)', 'ko');
-        else
-          setStatus('Aucun virage significatif dans 20 s', 'ko');
-
-        setIcon('images/droit.png');
-        qs('#next').textContent = '—';
-      }
-    }
-
-    /* =========================
-       nearestSnapDist (via PathEngine)
-       ========================= */
-    function nearestSnapDist(pos) {
-      let best = Infinity;
-
-      for (const [name, engine] of pathEngines) {
-        const pr = engine.update({ lat: pos.lat, lon: pos.lng }, lastHeading);
-        best = Math.min(best, pr.dist);
-      }
-
-      return best;
-    }
-  </script>
+</script>
 </body>
 </html>
