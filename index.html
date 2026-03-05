@@ -287,7 +287,7 @@ function processGps(gps) {
        STABILISATION : ignorer si vitesse trop faible
     ============================================================ */
 
-    if (vKmh < 3) {
+    if (vKmh < 1) {
         setStatus("Attente mouvement…", "ko");
         setIcon("images/droit.png");
         return;
@@ -443,3 +443,4 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
