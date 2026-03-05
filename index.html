@@ -378,7 +378,7 @@ function startTracking() {
             });
         },
         (err) => setStatus("Erreur GPS : " + err.message, "ko"),
-        { enableHighAccuracy: true, maximumAge: 800, timeout: 10000 }
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
     );
 }
 
@@ -395,5 +395,6 @@ function stopTracking() {
 </script>
 </body>
 </html>
+
 
 
