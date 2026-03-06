@@ -23,7 +23,7 @@
     .ok { color: var(--ok); font-weight: 700; }
     .ko { color: var(--ko); font-weight: 700; }
     .controls { display:flex; gap:10px; flex-wrap:wrap; padding: 8px 14px; }
-    button {
+     button {
       width: 100%;
       padding: 15px;
       margin: 8px 0;
@@ -34,7 +34,7 @@
       color: white;
       cursor: pointer;
     }
-   /* .night button { background: #1e1e1e; color: #eee; border-color: #333; }*/
+    /*.night button { background: #1e1e1e; color: #eee; border-color: #333; }*/
     .icon-wrap {
       flex: 1 1 auto;
       display:flex; align-items:center; justify-content:center;
@@ -53,7 +53,9 @@
     * { -webkit-tap-highlight-color: transparent; user-select: none; }
   </style>
 </head>
-	<body onload="document.body.classList.add('night')">
+
+<body onload="document.body.classList.add('night')">
+
 <body>
   <header>GTS – Mobile (virages à 20 s)</header>
 
@@ -74,7 +76,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>Sans carte, uniquement paths &amp; virages. Lookahead robuste, anti‑clignotement.</footer>
+  <footer>Engine PRO v4 coelod v0.2.3</footer>
 
  <script>
 /* ============================================================
@@ -132,44 +134,92 @@ function bearing(lat1, lon1, lat2, lon2) {
     return (Math.atan2(y,x) * 180/Math.PI + 360) % 360;
 }
 
+function inSector(h, min, max) {
+  h = ((h % 360) + 360) % 360;
+  if (min <= max) return h >= min && h <= max;
+  return (h >= min || h <= max); // wrap-around (ex: 300→40)
+}
+
+function getMatchedEntry(circle, heading) {
+  if (!circle.entries) return null;
+  for (const e of circle.entries) {
+    if (inSector(heading, e.min, e.max)) return e;
+  }
+  return null;
+}
+
+function getMatchedExit(circle, heading) {
+  if (!circle.exits) return null;
+  for (const e of circle.exits) {
+    if (inSector(heading, e.min, e.max)) return e;
+  }
+  return null;
+}
 /* ============================================================
    CIRCLE ENGINE PRO v3
 ============================================================ */
 
 /*
   FORMAT A
-  const circles = [
-    {
-      name: "rondpoint_superu",
-      lat: 48.1234,
-      lng: -1.2345,
-      radius: 25,
+ const circles = [
+  {
+    name: "rondpoint_superu",
+    lat: 48.12, lng: -1.23, radius: 25,
 
-      // OPTIONNEL
-      entryMin: 80,
-      entryMax: 160,
-      exitMin : 200,
-      exitMax : 260
-    }
-  ];
+    // MULTI-ENTRÉES : chaque entrée = un secteur + une image
+    entries: [
+      { min: 80,  max: 160, icon: "images/rp_entree_SE.png" },
+      { min: 250, max: 310, icon: "images/rp_entree_NO.png" }
+    ],
+
+    // MULTI-SORTIES : chaque sortie = un secteur + une image
+    exits: [
+      { min: 200, max: 260, icon: "images/rp_sortie_SO.png" },
+      { min: 20,  max: 60,  icon: "images/rp_sortie_NE.png" }
+    ],
+
+    // Icônes propres au cercle si aucune entrée/sortie n’a d’icône
+    iconApproach: "images/rp_approche.png",
+    iconEntry:    "images/rp_entree.png",
+    iconInside:   "images/rp_zone.png",
+    iconExit:     "images/rp_sortie.png"
+  }
+];
 */
 
 const circles = [
    // === EXEMPLES, à remplacer par les tiens ===
   // { name: "rondpoint_test", lat: 48.29589, lng: -0.92670, radius: 50},
-   
-	 {name: "Bifurcation", lat: 48.21999, lng: -1.09198, radius: 120},
-	 {name: "rond point cerf", lat: 48.29000, lng: -0.52670,  radius: 70},
+   {
+	 name: "Bifurcation", lat: 48.21999, lng: -1.09198, radius: 120, 
+	 entries: [
+	 {min: 130, max: 160, icon: "images/gauche.png"},
+	 {min: 280, max: 310, icon: "images/droite.png"}
+	 ],
+	 exits: [
+	 {min: 130, max: 160, icon: "images/50.png"}
+	 ],
+	 iconApproach: "images/danger.png",
+     iconInside:   "images/30.png",
+     iconExit:     "images/droit.png"
+	 },
+	 
+	{
+	 name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50,
+	iconApproach: "images/rond.png",
+    iconEntry:    "images/danger.png",
+    iconInside:   "images/rond.png",
+    iconExit:     "images/50.png"
+	},
+	 
+	 {name: "rond point cerf", lat: 48.29000, lng: -0.52670,  radius: 70, iconApproach: "images/rond.png", iconEntry: "images/rond.png", iconInside: "images/rond.png", iconExit: "images/pietons.png"},
 	 {name: "feu", lat: 48.29694, lng: -0.93666, radius: 60},
 	 {name: "Rond Point Belle Epoque", lat: 48.29768, lng: -0.93474, radius: 60},
-	 {name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50},
+	 
 	 {name: "direction vitré", lat: 48.29702, lng: -0.93928, radius: 80},
 	 {name: "deviation chailland", lat: 48.28065, lng: -0.96229, radius: 200},
 	 {name: "deviation st pierre", lat: 48.26329, lng: -0.98710, radius: 200},
-	 {name: "contour juvigne", lat: 48.24223, lng: -1.01691, radius: 100},
-	 {name: "chatillon", lat: 48.22754, lng: -1.17831, radius: 550},
-	 {name: "princé", lat: 48.21747, lng: -1.08846, radius: 200, entryMin: 100, entryMax: 180},
-	 {name: "lacet", lat: 48.21977, lng: -1.04380, radius: 400}
+	 {name: "contour juvigne", lat: 48.24223, lng: -1.01691, radius: 200}
 	 
 ];
 
@@ -297,9 +347,9 @@ function processGps(gps) {
        STABILISATION : ignorer si vitesse trop faible
     ============================================================ */
 
-    if (vKmh < 1) {
+    if (vKmh < 0) {
         setStatus("Attente mouvement…", "ko");
-        setIcon("images/droit.png");
+        setIcon("images/50sq.png");
         return;
     }
 
@@ -355,7 +405,13 @@ function processGps(gps) {
         if (dist <= current.radius + 5) {
             state = "ENTRY";
             setStatus(`Entrée "${current.name}"`, "ok");
-            setIcon("images/entree.png");
+            const e = getMatchedEntry(circCurrent, hdg);
+if (e && e.icon) {
+    setIcon(e.icon);
+} else {
+    setIcon(circCurrent.iconApproach || "images/approche.png");
+}
+``
             return;
         }
 
@@ -370,7 +426,12 @@ function processGps(gps) {
     if (state === "ENTRY") {
         state = "INSIDE";
         setStatus(`Dans "${current.name}"`, "ok");
-        setIcon("images/zone.png");
+        const e = getMatchedEntry(circCurrent, hdg);
+if (e && e.icon) {
+    setIcon(e.icon);
+} else {
+    setIcon(circCurrent.iconEntry || "images/entree.png");
+}
         return;
     }
 
@@ -388,7 +449,12 @@ function processGps(gps) {
 
             state = "EXIT";
             setStatus(`Sortie "${current.name}"`, "ok");
-            setIcon("images/sortie.png");
+            const x = getMatchedExit(circCurrent, hdg);
+if (x && x.icon) {
+    setIcon(x.icon);
+} else {
+    setIcon(circCurrent.iconExit || "images/sortie.png");
+}
 
             suppress = {
                 until: Date.now()+3000,
@@ -438,7 +504,7 @@ function startTracking() {
             });
         },
         (err) => setStatus("Erreur GPS : "+err.message,"ko"),
-        {enableHighAccuracy:true, maximumAge:500, timeout:10000}
+        {enableHighAccuracy:true, maximumAge:0, timeout:10000}
     );
 }
 
@@ -453,9 +519,3 @@ function stopTracking(){
 </script>
 </body>
 </html>
-
-
-
-
-
-
