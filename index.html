@@ -76,116 +76,99 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>Engine PRO v4 coelod v0.2.4</footer>
+  <footer>Engine PRO v4 coelod v0.2.7</footer>
 
  <script>
-/* ============================================================
-   UI HELPERS
-============================================================ */
+/***************************************************
+ *  CIRCLE ENGINE PRO v4
+ *  - Multi entries[]
+ *  - Multi inside[]
+ *  - Multi exits[]
+ *  - Icônes dynamiques par secteur
+ *  - Système overlap autorisé
+ *  - Machine d’état PRO v3 (approche → entry → inside → exit)
+ *  - Anti‑jitter, deadband, tendance réelle, hystérésis
+ *  - Vitesse / cap / ETA
+ ***************************************************/
 
-const qs = (sel) => document.querySelector(sel);
+/* ============================================
+   UI HELPERS
+============================================ */
+const qs = sel => document.querySelector(sel);
 
 function setIcon(src) { qs('#icon').src = src; }
 
 function setStatus(txt, cls) {
-    const el = qs('#status');
-    el.textContent = txt;
-    el.className = cls === "ok" ? "ok" : "ko";
+  const el = qs('#status');
+  el.textContent = txt;
+  el.className = cls === "ok" ? "ok" : "ko";
 }
 
 function setSpeed(kmh) {
-    qs('#speed').textContent =
-        isFinite(kmh) ? `${kmh.toFixed(0)} km/h` : "-- km/h";
+  qs('#speed').textContent =
+    isFinite(kmh) ? `${kmh.toFixed(0)} km/h` : "-- km/h";
 }
 
-function toggleNight() {
-    document.body.classList.toggle('night');
-}
-
-/* ============================================================
+/* ============================================
    GEO UTILS
-============================================================ */
-
+============================================ */
 const DEG = Math.PI / 180;
 const R   = 6371000;
 
 function distanceMeters(lat1, lon1, lat2, lon2) {
-    const dLat = (lat2 - lat1) * DEG;
-    const dLon = (lon2 - lon1) * DEG;
-
-    const a =
-        Math.sin(dLat/2)**2 +
-        Math.cos(lat1*DEG) * Math.cos(lat2*DEG) *
-        Math.sin(dLon/2)**2;
-
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const dLat = (lat2 - lat1) * DEG;
+  const dLon = (lon2 - lon1) * DEG;
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(lat1*DEG) * Math.cos(lat2*DEG) *
+    Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
 function bearing(lat1, lon1, lat2, lon2) {
-    const dLon = (lon2 - lon1) * DEG;
-    const l1 = lat1 * DEG;
-    const l2 = lat2 * DEG;
-
-    const y = Math.sin(dLon) * Math.cos(l2);
-    const x =
-        Math.cos(l1)*Math.sin(l2) -
-        Math.sin(l1)*Math.cos(l2)*Math.cos(dLon);
-
-    return (Math.atan2(y,x) * 180/Math.PI + 360) % 360;
+  const dLon = (lon2 - lon1) * DEG;
+  lat1 *= DEG; lat2 *= DEG;
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1)*Math.sin(lat2) -
+    Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+  return (Math.atan2(y,x)*180/Math.PI + 360) % 360;
 }
 
-function inSector(h, min, max) {
-  h = ((h % 360) + 360) % 360;
-  if (min <= max) return h >= min && h <= max;
-  return (h >= min || h <= max); // wrap-around (ex: 300→40)
+function normalize180(a) {
+  return ((a + 180) % 360 + 360) % 360 - 180;
 }
 
-function getMatchedEntry(circle, heading) {
-  if (!circle.entries) return null;
-  for (const e of circle.entries) {
-    if (inSector(heading, e.min, e.max)) return e;
-  }
-  return null;
-}
-
-function getMatchedExit(circle, heading) {
-  if (!circle.exits) return null;
-  for (const e of circle.exits) {
-    if (inSector(heading, e.min, e.max)) return e;
-  }
-  return null;
-}
-/* ============================================================
-   CIRCLE ENGINE PRO v3
-============================================================ */
-
+/* ============================================
+   CIRCLE CONFIG (À PERSONNALISER)
+============================================ */
 /*
-  FORMAT A
- const circles = [
-  {
-    name: "rondpoint_superu",
-    lat: 48.12, lng: -1.23, radius: 25,
-
-    // MULTI-ENTRÉES : chaque entrée = un secteur + une image
-    entries: [
-      { min: 80,  max: 160, icon: "images/rp_entree_SE.png" },
-      { min: 250, max: 310, icon: "images/rp_entree_NO.png" }
-    ],
-
-    // MULTI-SORTIES : chaque sortie = un secteur + une image
-    exits: [
-      { min: 200, max: 260, icon: "images/rp_sortie_SO.png" },
-      { min: 20,  max: 60,  icon: "images/rp_sortie_NE.png" }
-    ],
-
-    // Icônes propres au cercle si aucune entrée/sortie n’a d’icône
-    iconApproach: "images/rp_approche.png",
-    iconEntry:    "images/rp_entree.png",
-    iconInside:   "images/rp_zone.png",
-    iconExit:     "images/rp_sortie.png"
-  }
-];
-*/
+ * Structure possible :
+ *
+ * {
+ *   name: "zone1",
+ *   lat:  ..., lng: ..., radius: 25,
+ *
+ *   entries: [
+ *     { min: 80, max: 160, icon: "images/entree_SE.png" },
+ *     { min: 250, max: 310, icon: "images/entree_NO.png" }
+ *   ],
+ *
+ *   inside: [
+ *     { min: 0, max: 90, icon: "images/inside_NE.png" },
+ *     { min: 90, max:180, icon: "images/inside_SE.png" }
+ *   ],
+ *
+ *   exits: [
+ *     { min: 200, max: 260, icon: "images/sortie_SO.png" }
+ *   ],
+ *
+ *   iconApproach: "images/approche.png",
+ *   iconEntry:    "images/entree.png",
+ *   iconInside:   "images/zone.png",
+ *   iconExit:     "images/sortie.png"
+ * }
+ */
 
 const circles = [
    // === EXEMPLES, à remplacer par les tiens ===
@@ -206,96 +189,100 @@ const circles = [
 	 
 	{
 	 name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50,
-	iconApproach: "images/rond.png",
-    iconEntry:    "images/danger.png",
-    iconInside:   "images/rond.png",
-    iconExit:     "images/50.png"
+	 iconApproach: "images/rond.png",
+     iconEntry:    "images/danger.png",
+     iconInside:   "images/rond.png",
+     iconExit:     "images/50.png"
 	},
 	 
-	 {name: "rond point cerf", lat: 48.29000, lng: -0.52670,  radius: 70, iconApproach: "images/rond.png", iconEntry: "images/rond.png", iconInside: "images/rond.png", iconExit: "images/pietons.png"},
-	 {name: "feu", lat: 48.29694, lng: -0.93666, radius: 60},
+	 {name: "rond point cerf", lat: 48.29000, lng: -0.52670,  radius: 70, iconApproach: "images/danger.png", iconEntry: "images/rond.png", iconInside: "images/rond.png", iconExit: "images/pietons.png"},
+	 {name: "feu", lat: 48.29694, lng: -0.93666, radius: 60, iconApproach: "images/feu.png", iconEntry: "images/danger.png", iconInside: "images/30.png", iconExit: "images/pietons.png"},
 	 {name: "Rond Point Belle Epoque", lat: 48.29768, lng: -0.93474, radius: 60},
 	 
 	 {name: "direction vitré", lat: 48.29702, lng: -0.93928, radius: 80},
 	 {name: "deviation chailland", lat: 48.28065, lng: -0.96229, radius: 200},
-	 {name: "deviation st pierre", lat: 48.26329, lng: -0.98710, radius: 200},
+	 {
+	  name: "deviation st pierre", lat: 48.264291, lng: -0.985782, radius: 200,
+	 entries: [
+	 {min: 33, max: 53, icon: "images/droite.png"},
+	 {min: 292, max: 312, icon: "images/gauche.png"},
+	 {min: 213, max: 233, icon: "images/gauche.png"}
+	 ],
+	 inside: [
+	 {min: 33, max: 53, icon: "images/droite.png"},
+	 {min: 292, max: 312, icon: "images/gauche.png"},
+	 {min: 213, max: 233, icon: "images/gauche.png"}
+	 ],
+	 
+	 iconApproach: "images/danger.png",
+     iconExit:     "images/80.png"
+	 },
 	 {name: "contour juvigne", lat: 48.24223, lng: -1.01691, radius: 200}
 	 
 ];
 
-/* -------- Filtre spatial anti-jitter -------- */
+/* ============================================
+   SECTOR HELPERS (entrée, inside, sortie)
+============================================ */
 
-let filteredPos = null;
-
-function filterPos(p) {
-    if (!filteredPos) { filteredPos = p; return p; }
-
-    const d = distanceMeters(filteredPos.lat, filteredPos.lng, p.lat, p.lng);
-
-    if (d < 3) return filteredPos; // deadband
-
-    filteredPos = p;
-    return p;
+// secteurs overlap autorisés (ton choix)
+function inSector(h, min, max) {
+  h = ((h % 360) + 360) % 360;
+  if (min <= max) return h >= min && h <= max;
+  return (h >= min || h <= max);  // traverse 0°
 }
 
-/* -------- Distance centre cercle -------- */
+function getMatchedEntry(circle, heading) {
+  if (!circle.entries) return null;
+  for (const e of circle.entries) {
+    if (inSector(heading, e.min, e.max)) return e;
+  }
+  return null;
+}
 
+function getMatchedInside(circle, heading) {
+  if (!circle.inside) return null;
+  for (const s of circle.inside) {
+    if (inSector(heading, s.min, s.max)) return s;
+  }
+  return null;
+}
+
+function getMatchedExit(circle, heading) {
+  if (!circle.exits) return null;
+  for (const e of circle.exits) {
+    if (inSector(heading, e.min, e.max)) return e;
+  }
+  return null;
+}
+
+/* ============================================
+   ENGINE HELPERS
+============================================ */
 function circleDist(c, pos) {
-    return distanceMeters(c.lat, c.lng, pos.lat, pos.lng);
+  return distanceMeters(c.lat, c.lng, pos.lat, pos.lng);
 }
-
-/* -------- ETA -------- */
 
 function circleETA(c, pos, speedKmh) {
-    const v = speedKmh / 3.6;
-    if (v < 0.3) return Infinity;
-
-    const d = circleDist(c,pos) - c.radius;
-    return d > 0 ? d/v : 0;
+  const v = speedKmh / 3.6;
+  if (v < 0.4) return Infinity;
+  const d = circleDist(c,pos) - c.radius;
+  return d > 0 ? d/v : 0;
 }
 
-/* -------- Direction d’entrée autorisée -------- */
-
-function okEntryDir(c, heading) {
-    if (c.entryMin==null) return true;
-    const h = heading % 360;
-    return (
-        (c.entryMin <= c.entryMax && h >= c.entryMin && h <= c.entryMax) ||
-        (c.entryMin > c.entryMax  && (h >= c.entryMin || h <= c.entryMax))
-    );
+function isApproachingCircle(c, pos, prevPos) {
+  if (!prevPos) return false;
+  const d1 = circleDist(c, prevPos);
+  const d2 = circleDist(c, pos);
+  return d2 < d1 - 1.2; // approche réelle
 }
 
-/* -------- Direction de sortie autorisée -------- */
-
-function okExitDir(c, heading) {
-    if (c.exitMin==null) return true;
-    const h = heading % 360;
-    return (
-        (c.exitMin <= c.exitMax && h >= c.exitMin && h <= c.exitMax) ||
-        (c.exitMin > c.exitMax  && (h >= c.exitMin || h <= c.exitMax))
-    );
-}
-
-/* -------- VÉRIFIE TENDANCE D’APPROCHE RÉELLE -------- */
-
-function isApproaching(c, pos, prevPos) {
-    if (!prevPos) return false;
-    const d1 = circleDist(c, prevPos);
-    const d2 = circleDist(c, pos);
-    return d2 < d1 - 1.2; // diminution réelle > 1.2m
-}
-
-/* ============================================================
-   MACHINE D’ÉTAT
-============================================================ */
-
-let state = "IDLE";
-let current = null;
-let suppress = { until: 0, name: null };
-
-/* ============================================================
-   GPS PROCESSING
-============================================================ */
+/* ============================================
+   ENGINE STATE
+============================================ */
+let circState = "IDLE";
+let circCurrent = null;
+let circSuppress = { until: 0, name: null };
 
 let lastPos = null;
 let prevPos = null;
@@ -303,221 +290,219 @@ let lastFixTs = null;
 let lastSpeed = 0;
 let lastHeading = null;
 
-/* ---- Lissage vitesse ---- */
-function smoothSpeed(s) {
-    lastSpeed = lastSpeed*0.6 + s*0.4;
-    return lastSpeed;
+let filteredPos = null;
+
+/* deadband anti-jitter */
+function filterPos(p) {
+  if (!filteredPos) { filteredPos = p; return p; }
+  const d = distanceMeters(filteredPos.lat, filteredPos.lng, p.lat, p.lng);
+  if (d < 3) return filteredPos;
+  filteredPos = p;
+  return p;
 }
 
-/* ============================================================
-   PROCESS GPS
-============================================================ */
+function smoothSpeed(s) {
+  lastSpeed = lastSpeed*0.6 + s*0.4;
+  return lastSpeed;
+}
 
+/* ============================================
+   GPS PROCESSING — CIRCLES ONLY
+============================================ */
 function processGps(gps) {
 
-    /* --- heading --- */
-    if (isFinite(gps.heading)) {
-        lastHeading = (gps.heading + 360) % 360;
-    } else if (prevPos) {
-        const hdg = bearing(prevPos.lat, prevPos.lng, gps.lat, gps.lng);
-        if (isFinite(hdg)) lastHeading = hdg;
+  /* heading */
+  if (isFinite(gps.heading))
+    lastHeading = (gps.heading + 360) % 360;
+  else if (prevPos) {
+    const hdg = bearing(prevPos.lat, prevPos.lng, gps.lat, gps.lng);
+    if (isFinite(hdg)) lastHeading = hdg;
+  }
+
+  /* speed */
+  const now = Date.now();
+  if (isFinite(gps.speedKmh))
+    setSpeed(smoothSpeed(gps.speedKmh));
+  else if (lastPos && lastFixTs) {
+    const dt = (now-lastFixTs)/1000;
+    const d  = distanceMeters(lastPos.lat,lastPos.lng,gps.lat,gps.lng);
+    const v  = dt>0 ? d/dt : 0;
+    setSpeed(smoothSpeed(Math.min(v,80)*3.6));
+  }
+
+  prevPos   = lastPos;
+  lastPos   = filterPos({ lat:gps.lat, lng:gps.lng });
+  lastFixTs = now;
+
+  const pos   = lastPos;
+  const vKmh  = lastSpeed;
+  const hdg   = lastHeading ?? 0;
+
+  if (vKmh < 3) {
+    setStatus("Attente mouvement…", "ko");
+    setIcon("images/50.png");
+    return;
+  }
+
+  /* ============================================
+     MACHINE D'ÉTAT CERCLES
+  ============================================= */
+
+  /* ========== IDLE ========== */
+  if (circState === "IDLE") {
+    let best = null;
+
+    for (const c of circles) {
+      if (Date.now() < circSuppress.until && circSuppress.name === c.name)
+        continue;
+
+      const dist = circleDist(c,pos);
+      const eta  = circleETA(c,pos,vKmh);
+
+      if (dist < c.radius + 120 &&
+          isApproachingCircle(c,pos,prevPos)) {
+
+        if (!best || eta < best.eta)
+          best = { circle:c, dist, eta };
+      }
     }
 
-    /* --- vitesse --- */
-    const now = Date.now();
+    if (best) {
+      circCurrent = best.circle;
+      circState   = "APPROACH";
 
-    if (isFinite(gps.speedKmh)) {
-        setSpeed(smoothSpeed(gps.speedKmh));
-    } else if (lastPos && lastFixTs) {
-        const dt = (now-lastFixTs)/1000;
-        const d = distanceMeters(lastPos.lat,lastPos.lng,gps.lat,gps.lng);
-        const v = dt>0 ? d/dt : 0;
-        setSpeed(smoothSpeed(Math.min(v,80)*3.6));
+      const e = getMatchedEntry(circCurrent, hdg);
+      if (e && e.icon) setIcon(e.icon);
+      else setIcon(circCurrent.iconApproach || "images/approche.png");
+
+      setStatus(`Approche "${circCurrent.name}"`, "ok");
+      qs("#next").textContent = `${Math.round(best.dist)} m • ${Math.round(best.eta)} s`;
+      return;
     }
 
-    prevPos   = lastPos;
-    lastPos   = filterPos({ lat:gps.lat, lng:gps.lng });
-    lastFixTs = now;
+    setStatus("Aucune zone proche", "ko");
+    setIcon("images/droit.png");
+    qs("#next").textContent = "—";
+    return;
+  }
 
-    const pos = lastPos;
-    const vKmh = lastSpeed;
-    const hdg = lastHeading ?? 0;
+  /* ========== APPROACH ========== */
+  if (circState === "APPROACH") {
 
-    /* ============================================================
-       STABILISATION : ignorer si vitesse trop faible
-    ============================================================ */
+    const dist = circleDist(circCurrent,pos);
 
-    if (vKmh < 0) {
-        setStatus("Attente mouvement…", "ko");
-        setIcon("images/50sq.png");
-        return;
+    if (!isApproachingCircle(circCurrent,pos,prevPos)) {
+      circState = "IDLE";
+      return;
     }
 
-    /* ============================================================
-       ÉTATS
-    ============================================================ */
+    if (dist <= circCurrent.radius + 5) {
+      circState = "ENTRY";
 
-    if (state === "IDLE") {
+      const e = getMatchedEntry(circCurrent, hdg);
+      if (e && e.icon) setIcon(e.icon);
+      else setIcon(circCurrent.iconEntry || "images/entree.png");
 
-        let best = null;
-
-        for (const c of circles) {
-
-            if (Date.now() < suppress.until && suppress.name === c.name)
-                continue;
-
-            const dist = circleDist(c,pos);
-            const eta  = circleETA(c,pos,vKmh);
-
-            if (dist < c.radius + 120 && isApproaching(c,pos,prevPos) && okEntryDir(c,hdg)) {
-                if (!best || eta < best.eta)
-                    best = {circle:c, dist, eta};
-            }
-        }
-
-        if (best) {
-            current = best.circle;
-            state   = "APPROACH";
-
-            setStatus(`Approche "${current.name}"`, "ok");
-            setIcon("images/approche.png");
-            qs('#next').textContent = `${Math.round(best.dist)} m • ${Math.round(best.eta)} s`;
-            return;
-        }
-
-        setStatus("Aucune zone proche", "ko");
-        setIcon("images/droit.png");
-        qs('#next').textContent = "—";
-        return;
+      setStatus(`Entrée "${circCurrent.name}"`, "ok");
+      qs("#next").textContent = "—";
+      return;
     }
 
-    /* ========== APPROACH ========== */
+    const e = getMatchedEntry(circCurrent, hdg);
+    if (e && e.icon) setIcon(e.icon);
+    else setIcon(circCurrent.iconApproach || "images/approche.png");
 
-    if (state === "APPROACH") {
+    setStatus(`Approche "${circCurrent.name}"`, "ok");
+    qs("#next").textContent = `${Math.round(dist)} m`;
+    return;
+  }
 
-        const dist = circleDist(current,pos);
+  /* ========== ENTRY → INSIDE ========== */
+  if (circState === "ENTRY") {
+    circState = "INSIDE";
 
-        if (!isApproaching(current,pos,prevPos)) {
-            state = "IDLE";
-            return;
-        }
+    const s = getMatchedInside(circCurrent, hdg);
+    if (s && s.icon) setIcon(s.icon);
+    else setIcon(circCurrent.iconInside || "images/zone.png");
 
-        if (dist <= current.radius + 5) {
-            state = "ENTRY";
-            setStatus(`Entrée "${current.name}"`, "ok");
-            const e = getMatchedEntry(circCurrent, hdg);
-if (e && e.icon) {
-    setIcon(e.icon);
-} else {
-    setIcon(circCurrent.iconApproach || "images/approche.png");
-}
-``
-            return;
-        }
+    setStatus(`Dans "${circCurrent.name}"`, "ok");
+    qs("#next").textContent = "—";
+    return;
+  }
 
-        setStatus(`Approche "${current.name}"`, "ok");
-        setIcon(circCurrent.iconApproach || "images/approche.png");
-        qs('#next').textContent = `${Math.round(dist)} m`;
-        return;
+  /* ========== INSIDE ========== */
+  if (circState === "INSIDE") {
+
+    const dist  = circleDist(circCurrent,pos);
+    const dPrev = circleDist(circCurrent, prevPos ?? pos);
+    const trend = dist - dPrev;
+
+    const s = getMatchedInside(circCurrent, hdg);
+    if (s && s.icon) setIcon(s.icon);
+    else setIcon(circCurrent.iconInside || "images/zone.png");
+
+    if (trend > 0.8 && dist > circCurrent.radius + 12) {
+
+      const x = getMatchedExit(circCurrent, hdg);
+      if (x && x.icon) setIcon(x.icon);
+      else setIcon(circCurrent.iconExit || "images/sortie.png");
+
+      circState = "EXIT";
+      circSuppress = { until: Date.now()+3000, name: circCurrent.name };
+      setStatus(`Sortie "${circCurrent.name}"`, "ok");
+      return;
     }
 
-    /* ========== ENTRY → INSIDE ========== */
+    setStatus(`Dans "${circCurrent.name}"`, "ok");
+    qs("#next").textContent = `${Math.round(dist)} m`;
+    return;
+  }
 
-    if (state === "ENTRY") {
-        state = "INSIDE";
-        setStatus(`Dans "${current.name}"`, "ok");
-        const e = getMatchedEntry(circCurrent, hdg);
-if (e && e.icon) {
-    setIcon(e.icon);
-} else {
-    setIcon(circCurrent.iconEntry || "images/entree.png");
-}
-        return;
-    }
-
-    /* ========== INSIDE ========== */
-
-    if (state === "INSIDE") {
-
-        const dist = circleDist(current,pos);
-
-        // vérifier éloignement réel
-        const dPrev = circleDist(current, prevPos ?? pos);
-        const trend = dist - dPrev;
-
-        if (trend > 0.8 && dist > current.radius + 12 && okExitDir(current,hdg)) {
-
-            state = "EXIT";
-            setStatus(`Sortie "${current.name}"`, "ok");
-            const x = getMatchedExit(circCurrent, hdg);
-if (x && x.icon) {
-    setIcon(x.icon);
-} else {
-    setIcon(circCurrent.iconExit || "images/sortie.png");
-}
-
-            suppress = {
-                until: Date.now()+3000,
-                name : current.name
-            };
-
-            return;
-        }
-
-        setStatus(`Dans "${current.name}"`, "ok");
-        setIcon("images/zone.png");
-        qs('#next').textContent = `${Math.round(dist)} m`;
-        return;
-    }
-
-    /* ========== EXIT ========== */
-
-    if (state === "EXIT") {
-        state = "IDLE";
-        current = null;
-        qs('#next').textContent = "—";
-        return;
-    }
+  /* ========== EXIT ========== */
+  if (circState === "EXIT") {
+    circState = "IDLE";
+    circCurrent = null;
+    qs("#next").textContent = "—";
+    return;
+  }
 }
 
-/* ============================================================
+/* ============================================
    GPS API
-============================================================ */
-
+============================================ */
 let watchId = null;
 
 function startTracking() {
-    if (!navigator.geolocation) {
-        setStatus("GPS non supporté", "ko");
-        return;
-    }
+  if (!navigator.geolocation) {
+    setStatus("GPS non supporté", "ko");
+    return;
+  }
 
-    setStatus("Acquisition GPS…", "ok");
+  setStatus("Acquisition GPS…", "ok");
 
-    watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-            processGps({
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude,
-                speedKmh: pos.coords.speed != null ? pos.coords.speed*3.6 : null,
-                heading: pos.coords.heading
-            });
-        },
-        (err) => setStatus("Erreur GPS : "+err.message,"ko"),
-        {enableHighAccuracy:true, maximumAge:0, timeout:10000}
-    );
+  watchId = navigator.geolocation.watchPosition(
+    pos => {
+      processGps({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        speedKmh: pos.coords.speed != null ? pos.coords.speed*3.6 : null,
+        heading: pos.coords.heading
+      });
+    },
+    err => setStatus("Erreur GPS : " + err.message, "ko"),
+    { enableHighAccuracy:true, timeout:10000, maximumAge:0 }
+  );
 }
 
-function stopTracking(){
-    if (watchId!=null) navigator.geolocation.clearWatch(watchId);
-    watchId=null;
-    setStatus("GPS arrêté","ko");
-    qs('#next').textContent="—";
-    setIcon("images/droit.png");
+function stopTracking() {
+  if (watchId != null) navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+
+  setStatus("GPS arrêté", "ko");
+  qs("#next").textContent = "—";
+  setIcon("images/droit.png");
 }
 
 </script>
 </body>
 </html>
-
-
