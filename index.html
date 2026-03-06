@@ -416,7 +416,7 @@ if (e && e.icon) {
         }
 
         setStatus(`Approche "${current.name}"`, "ok");
-        setIcon("images/approche.png");
+        setIcon(circCurrent.iconApproach || "images/approche.png");
         qs('#next').textContent = `${Math.round(dist)} m`;
         return;
     }
@@ -519,3 +519,4 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
