@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.2.4</footer>
+  <footer>CircleEngine PRO v4 coelod v0.2.5</footer>
 
 <script>
 /* ============================================================
@@ -611,7 +611,7 @@ const circles = [
  
  
  
- {name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50, iconInside: "iconApproach": "images/rond.png", "images/rond.png"},
+ {name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50, iconInside: "images/rond.png", iconApproach: "images/rond.png"},
    {name: "chatillon", lat: 48.22754, lng: -1.17831, radius: 550},
   {name: "princé", lat: 48.21747, lng: -1.08846, radius: 200, entryMin: 100, entryMax: 180},
   {name: "lacet", lat: 48.21977, lng: -1.04380, radius: 400}
@@ -874,7 +874,7 @@ function processGps(gps) {
         const approachIcon = ePreview && ePreview.icon ? iconPath(ePreview.icon) : null;
 
         setStatus(`Approche "${circCurrent.name}"`, "ok");
-        setIcon(approachIcon || iconPath("approche"));
+        setIcon(approachIcon || iconPath("droit"));
         const next = qs('#next'); if (next) next.textContent = `${Math.round(dist)} m`;
         return;
     }
@@ -974,6 +974,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
