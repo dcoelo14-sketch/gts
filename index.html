@@ -827,7 +827,7 @@ function processGps(gps) {
             const approachIcon = ePreview && ePreview.icon ? iconPath(ePreview.icon) : null;
 
             setStatus(`Approche "${circCurrent.name}"`, "ok");
-            setIcon(approachIcon || iconPath("approche"));
+            setIcon(approachIcon || iconPath("droit"));
             const next = qs('#next'); if (next) next.textContent = `${Math.round(best.dist)} m • ${Math.round(best.eta)} s`;
             return;
         }
@@ -974,6 +974,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
