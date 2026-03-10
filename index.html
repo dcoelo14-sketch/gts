@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.2.6</footer>
+  <footer>CircleEngine PRO v4 coelod v0.2.7</footer>
 
 <script>
 /* ============================================================
@@ -163,20 +163,35 @@ const circles = [
   "lat": 48.22072698210351,
   "lng": -1.0927426815032961,
   "radius": 80,
-  "iconApproach": null,
+  
   "entries": [
     {
       "min": 135,
       "max": 155,
+		"iconApproach":"images/gauche.png",
       "icon": "images/gauche.png"
     },
     {
       "min": 270,
       "max": 290,
+		"iconApproach":"images/droite.png",
       "icon": "images/droite.png"
     }
   ],
-  "inside": [],
+  "inside": [
+	    {
+      "min": 135,
+      "max": 155,
+		"iconApproach":"images/gauche.png",
+      "icon": "images/gauche.png"
+    },
+    {
+      "min": 270,
+      "max": 290,
+		"iconApproach":"images/droite.png",
+      "icon": "images/droite.png"
+    }
+  ],
   "exits": [
     {
       "min": 270,
@@ -253,26 +268,27 @@ const circles = [
   "lat": 48.291581115499795,
   "lng": -0.9264484047889711,
   "radius": 25,
-  "iconApproach": "images/gauche.png",
-  "iconExit": "images/danger.png",
+   "iconExit": "images/danger.png",
   "entries": [
     {
       "min": 293,
       "max": 313,
+		"iconApproach": "images/gauche.png",
       "icon": "images/gauche.png",
       "_irregular": true
     },
     {
       "min": 208,
       "max": 228,
+		"iconApproach": "images/gauche.png",
       "icon": "images/gauche.png",
       "_irregular": true
     },
     {
       "min": 119,
       "max": 143,
-      "icon": "images/droit.png",
-		"insideIcon": "images/droit.png",
+      "icon": "images/droite.png",
+		"IconApproach": "images/droite.png",
       "_irregular": true
     },
     {
@@ -283,7 +299,30 @@ const circles = [
       "_irregular": true
     }
   ],
-  "inside": [],
+  "inside": [ {
+      "min": 293,
+      "max": 313,
+		 "icon": "images/gauche.png",
+      "_irregular": true
+    },
+    {
+      "min": 208,
+      "max": 228,
+		 "icon": "images/gauche.png",
+      "_irregular": true
+    },
+    {
+      "min": 119,
+      "max": 143,
+      "icon": "images/droite.png",
+		"_irregular": true
+    },
+    {
+      "min": 353,
+      "max": 83,
+      "icon": "images/droit.png",
+       "_irregular": true
+    }],
   "exits": [
     {
       "min": 293,
@@ -1020,6 +1059,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
