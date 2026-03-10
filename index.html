@@ -931,7 +931,7 @@ function processGps(gps) {
 
         // Sticky INSIDE : icône liée au sens d’arrivée si dispo, sinon fallback iconInside / zone
         const stickyIcon = (circArrivalEntry && circArrivalEntry.icon) ? iconPath(circArrivalEntry.icon) : null;
-        setIcon(stickyIcon || iconPath("zone")); // si tu as circCurrent.iconInside, remplace iconPath("zone") par iconPath(circCurrent.iconInside) || iconPath("zone")
+        setIcon(stickyIcon ||iconPath(circCurrent.iconInside) || iconPath("zone")); // si tu as circCurrent.iconInside, remplace iconPath("zone") par iconPath(circCurrent.iconInside) || iconPath("zone")
 
         setStatus(`Dans "${circCurrent.name}"`, "ok");
         const next = qs('#next'); if (next) next.textContent = "—";
@@ -949,7 +949,7 @@ function processGps(gps) {
 
         // Sticky INSIDE : conserve l’icône du secteur d’entrée si dispo
         const stickyIcon = (circArrivalEntry && circArrivalEntry.icon) ? iconPath(circArrivalEntry.icon) : null;
-        setIcon(stickyIcon || iconPath("zone")); // ou iconPath(circCurrent.iconInside) si tu le définis
+        setIcon(stickyIcon || iconPath(circCurrent.iconInside)); // ou iconPath(circCurrent.iconInside) si tu le définis
 
         if (trend > 0.8 && dist > circCurrent.radius + 12 && okExitDir(circCurrent,hdg)) {
 
@@ -1006,7 +1006,7 @@ function startTracking() {
             });
         },
         (err) => setStatus("Erreur GPS : "+err.message,"ko"),
-        {enableHighAccuracy:true, maximumAge:500, timeout:3000}
+        {enableHighAccuracy:true, maximumAge:200, timeout:3000}
     );
 }
 
@@ -1020,6 +1020,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
