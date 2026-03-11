@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.2.7</footer>
+  <footer>CircleEngine PRO v4 coelod v0.2.8</footer>
 
 <script>
 /* ============================================================
@@ -158,52 +158,39 @@ function bearing(lat1, lon1, lat2, lon2) {
 */
 
 const circles = [
-  {
-  "name": "bifur",
-  "lat": 48.22072698210351,
-  "lng": -1.0927426815032961,
-  "radius": 80,
-  
-  "entries": [
-    {
-      "min": 135,
-      "max": 155,
-		"iconApproach":"images/gauche.png",
-      "icon": "images/gauche.png"
-    },
-    {
-      "min": 270,
-      "max": 290,
-		"iconApproach":"images/droite.png",
-      "icon": "images/droite.png"
-    }
-  ],
+ {
+  "name": "bifurc",
+  "lat": 48.22022660399256,
+  "lng": -1.0922062397003176,
+  "radius": 70,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [],
   "inside": [
-	    {
-      "min": 135,
-      "max": 155,
-		"iconApproach":"images/gauche.png",
-      "icon": "images/gauche.png"
-    },
     {
-      "min": 270,
-      "max": 290,
-		"iconApproach":"images/droite.png",
+      "min": 136,
+      "max": 156,
+      "icon": "images/gauche.png"
+    }
+  ],
+  "exits": []
+},
+	{
+  "name": "bifurc2",
+  "lat": 48.220744852659884,
+  "lng": -1.093445420265198,
+  "radius": 59,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [],
+  "inside": [
+    {
+      "min": 286,
+      "max": 306,
       "icon": "images/droite.png"
     }
   ],
-  "exits": [
-    {
-      "min": 270,
-      "max": 290,
-      "icon": "images/80.png"
-    },
-    {
-      "min": 135,
-      "max": 155,
-      "icon": "images/danger.png"
-    }
-  ]
+  "exits": []
 },
  {
   "name": "RP Cerf",
@@ -1059,6 +1046,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
