@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.2.8</footer>
+  <footer>CircleEngine PRO v4 coelod v0.2.9</footer>
 
 <script>
 /* ============================================================
@@ -197,24 +197,8 @@ const circles = [
   "lat": 48.29561054062567,
   "lng": -0.9292513132095338,
   "radius": 41,
-  "iconApproach": "images/rond.png",
-  "entries": [
-    {
-      "min": 63,
-      "max": 83,
-      "icon": "images/rond.png"
-    },
-    {
-      "min": 261,
-      "max": 281,
-      "icon": "images/rond.png"
-    },
-    {
-      "min": 160,
-      "max": 180,
-      "icon": "images/rond.png"
-    }
-  ],
+  "iconApproach": null,
+  
   "inside": [
 	    {
       "min": 63,
@@ -232,23 +216,7 @@ const circles = [
       "icon": "images/droite.png"
     }
   ],
-  "exits": [
-    {
-      "min": 63,
-      "max": 83,
-      "icon": "images/50.png"
-    },
-    {
-      "min": 261,
-      "max": 281,
-      "icon": "images/pietons.png"
-    },
-    {
-      "min": 160,
-      "max": 180,
-      "icon": "images/droit.png"
-    }
-  ]
+  "exits": [ ]
 },
 {
   "name": "RP Market",
@@ -424,40 +392,21 @@ const circles = [
   "lng": -0.9622988104820253,
   "radius": 80,
   
-  "iconExit": "images/80.png",
-  "entries": [
-    {
-      "min": 32,
-      "max": 52,
-      "icon": "images/gauche.png",
-	  "iconApproach": "images/gauche.png"
-    },
-    {
-      "min": 215,
-      "max": 235,
-	  "iconApproach": "images/droite.png",
-      "icon": "images/droite.png"
-    }
-  ],
+  "iconExit": null,
+  "entries": [  ],
   "inside": [
 	    {
       "min": 32,
       "max": 52,
-      "icon": "images/gauche.png"
+      "icon": "images/droite.png"
     },
     {
       "min": 215,
       "max": 235,
-      "icon": "images/droite.png"
+      "icon": "images/gauche.png"
     }
   ],
-  "exits": [
-    {
-      "min": 141,
-      "max": 175,
-      "icon": "images/danger.png"
-    }
-  ]
+  "exits": []
 },
 {
   "name": "st pierre",
@@ -465,18 +414,7 @@ const circles = [
   "lng": -0.9870582818984986,
   "radius": 90,
   "iconExit": "images/danger.png",
-  "entries": [
-    {
-      "min": 34,
-      "max": 54,
-      "icon": "images/droite.png"
-    },
-    {
-      "min": 211,
-      "max": 231,
-      "icon": "images/gauche.png"
-    }
-  ],
+  "entries": [],
   "inside": [
 	      {
       "min": 34,
@@ -488,15 +426,8 @@ const circles = [
       "max": 231,
       "icon": "images/gauche.png"
     }
-  ],
-  "exits": [
-    {
-      "min": 291,
-      "max": 311,
-      "icon": "images/danger.png"
-    }
   ]
-},
+ },
 
 {
   "name": "Vitré",
@@ -1046,6 +977,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
