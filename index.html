@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.2.9</footer>
+  <footer>CircleEngine PRO v4 coelod v0.3.1</footer>
 
 <script>
 /* ============================================================
@@ -972,11 +972,12 @@ function stopTracking(){
     watchId=null;
     setStatus("GPS arrêté","ko");
     const next = qs('#next'); if (next) next.textContent="—";
-    setIcon(iconPath("droit"));
+    setIcon(iconPath("danger"));
 }
 </script>
 </body>
 </html>
+
 
 
 
