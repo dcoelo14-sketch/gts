@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.3.2</footer>
+  <footer>CircleEngine PRO v4 coelod v0.3.4</footer>
 
 <script>
 /* ============================================================
@@ -500,7 +500,7 @@ const circles = [
   "lat": 48.29702736654277,
   "lng": -0.9392318129539491,
   "radius": 64,
-  "iconApproach": null",
+  "iconApproach": null,
   "iconExit": "images/pietons.png",
   "entries": [
     {
@@ -528,166 +528,236 @@ const circles = [
   "inside": [],
   "exits": []
 },
-  {
+{
   "name": "feux",
-  "lat": 48.29695955964914,
-  "lng": -0.936638116836548,
+  "lat": 48.29694706889574,
+  "lng": -0.9366273880004884,
   "radius": 40,
-  "iconApproach": null,
+  "iconApproach": "images/feux.png",
   "iconExit": "images/pietons.png",
   "entries": [
     {
-      "min": 87,
-      "max": 107,
-      "icon": "images/feux.png"
+      "min": 85,
+      "max": 105,
+      "icon": "images/feux.png",
+      "insideIcon": "images/feux.png",
+      "_irregular": true
     },
     {
-      "min": 263,
-      "max": 283,
-      "icon": "images/feux.png"
-    }
-  ],
-  "inside": [
-	    {
-      "min": 87,
-      "max": 107,
-      "icon": "images/danger.png"
-    },
-    {
-      "min": 263,
-      "max": 283,
-      "icon": "images/danger.png"
-    }
-  ],
-  "exits": []
-},
-  {
-  "name": "Dev Juvigné",
-  "lat": 48.24224575932903,
-  "lng": -1.016916632652283,
-  "radius": 80,
-  "iconApproach": null,
-  "iconExit": null,
-  "entries": [
-    {
-      "min": 32,
-      "max": 52,
-      "icon": "images/gauche.png"
-    },
-    {
-      "min": 214,
-      "max": 234,
-      "icon": "images/droite.png"
-    }
-  ],
-  "inside": [
-	   {
-      "min": 32,
-      "max": 52,
-      "icon": "images/gauche.png"
-    },
-    {
-      "min": 214,
-      "max": 234,
-      "icon": "images/droite.png"
-    }
-  ],
-  "exits": [
-    {
-      "min": 118,
-      "max": 138,
-      "icon": "images/2emedroite.png"
-    }
-  ]
-},
-{
-  "name": "cuma",
-  "lat": 48.22548211710998,
-  "lng": -1.1719778180122378,
-  "radius": 80,
-  "iconApproach": "images/gauche.png",
-  "entries": [
-    {
-      "min": 275,
-      "max": 295,
-      "icon": "images/gauche.png"
-    },
-	   {
-      "min": 24,
-      "max": 44,
-      "icon": "images/droite.png"
-    }
-  ],
-  "inside": [
-    {
-      "min": 275,
-      "max": 295,
-      "icon": "images/gauche.png"
-    },
-	  {
-      "min": 24,
-      "max": 44,
-      "icon": "images/droite.png"
-    }
-  ],
-  "exits": [
-	   {
-      "min": 24,
-      "max": 44,
-      "icon": "images/80.png"
-    }
-  ]
-},
-{
-  "name": "juv1",
-  "lat": 48.22991877252987,
-  "lng": -1.031695604324341,
-  "radius": 50,
-  "iconExit": "images/2emedroite.png",
-  "entries": [
-    {
-      "min": 96,
-      "max": 116,
-	"iconApproach": "images/gauche.png",
-      "icon": "images/gauche.png"
-    },
-	 {
-      "min": 24,
-      "max": 44,
-		 "iconApproach": "images/droite.png",
-      "icon": "images/droite.png"
-    }
-  ],
-  "inside": [{
-	  "iconApproach": "images/priorite.png"
-  }
-  ],
-  "exits": []
-}, 
-{
-  "name": "juv2",
-  "lat": 48.22853224735296,
-  "lng": -1.0327658057212832,
-  "radius": 30,
-  "iconApproach": "images/danger.png",
-  "iconExit": "images/droite.png",
-  "entries": [
-    {
-      "min": 90,
-      "max": 110,
-      "icon": "images/gauche.png"
+      "min": 265,
+      "max": 285,
+      "icon": "images/feux.png",
+      "insideIcon": "images/feux.png",
+      "_irregular": true
     }
   ],
   "inside": [],
   "exits": []
 },
+{
+  "name": "dev juvigné",
+  "lat": 48.24224575932903,
+  "lng": -1.0169327259063723,
+  "radius": 100,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 213,
+      "max": 233,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    },
+    {
+      "min": 32,
+      "max": 52,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 120,
+      "max": 140,
+      "icon": "images/2emedroite.png",
+      "_irregular": true
+    }
+  ]
+},{
+  "name": "cuma",
+  "lat": 48.2254839039999,
+  "lng": -1.171969771385193,
+  "radius": 49,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 90,
+      "max": 110,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    },
+    {
+      "min": 278,
+      "max": 298,
+      "icon": "images/droit.png",
+      "insideIcon": "images/droit.png",
+      "_irregular": true
+    },
+    {
+      "min": 190,
+      "max": 210,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 190,
+      "max": 210,
+      "icon": "images/50.png",
+      "_irregular": true
+    },
+    {
+      "min": 90,
+      "max": 110,
+      "icon": "images/danger.png",
+      "_irregular": true
+    },
+    {
+      "min": 278,
+      "max": 298,
+      "icon": "images/droit.png",
+      "_irregular": true
+    }
+  ]
+},
+{
+  "name": "dev lacet 1",
+  "lat": 48.22930413198368,
+  "lng": -1.035869121551514,
+  "radius": 50,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 195,
+      "max": 221,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    },
+    {
+      "min": 352,
+      "max": 18,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    },
+    {
+      "min": 128,
+      "max": 148,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 125,
+      "max": 151,
+      "icon": "images/droite.png",
+      "_irregular": true
+    }
+  ]
+}, 
+{
+  "name": "dev lacet 2",
+  "lat": 48.22375773926874,
+  "lng": -1.0141754150390627,
+  "radius": 85,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 271,
+      "max": 297,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    },
+    {
+      "min": 356,
+      "max": 22,
+      "icon": "images/droit.png",
+      "insideIcon": "images/droit.png",
+      "_irregular": true
+    },
+    {
+      "min": 176,
+      "max": 196,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 173,
+      "max": 199,
+      "icon": "images/droit.png",
+      "_irregular": true
+    }
+  ]
+},
+	{
+  "name": "dev lacet 3",
+  "lat": 48.20390802352182,
+  "lng": -1.0243141651153567,
+  "radius": 79,
+  "iconApproach": null,
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 349,
+      "max": 15,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    },
+    {
+      "min": 283,
+      "max": 309,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 283,
+      "max": 309,
+      "icon": "images/droit.png",
+      "_irregular": true
+    }
+  ]
+},
  
  
  
  {name: "rond point paris", lat: 48.29589, lng: -0.92670, radius: 50, iconInside: "images/rond.png", iconApproach: "images/rond.png"},
-   {name: "chatillon", lat: 48.22754, lng: -1.17831, radius: 550},
+   {name: "chatillon", lat: 48.22754, lng: -1.17831, radius: 550, iconInside: "images/50.png", iconApproach: "images/Chatillon.png"},
   {name: "princé", lat: 48.21747, lng: -1.08846, radius: 200, entryMin: 100, entryMax: 180},
-  {name: "lacet", lat: 48.21977, lng: -1.04380, radius: 400}
+  {name: "lacet", lat: 48.21977, lng: -1.04380, radius: 400, iconInside: "images/lacet.png"}
 ];
 
 /* -------- Filtre spatial anti-jitter -------- */
@@ -1047,6 +1117,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
