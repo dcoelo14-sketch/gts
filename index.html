@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.3.1</footer>
+  <footer>CircleEngine PRO v4 coelod v0.3.2</footer>
 
 <script>
 /* ============================================================
@@ -496,33 +496,37 @@ const circles = [
   ]
 },
 {
-  "name": "Vitré",
-  "lat": 48.29702915093351,
-  "lng": -0.9392398595809938,
-  "radius": 80,
-  "iconApproach": null,
-  "iconExit": null,
+  "name": "vers Vitré",
+  "lat": 48.29702736654277,
+  "lng": -0.9392318129539491,
+  "radius": 64,
+  "iconApproach": null",
+  "iconExit": "images/pietons.png",
   "entries": [
     {
-      "min": 79,
-      "max": 99,
-      "icon": "images/gauche.png"
-    }
-  ],
-  "inside": [
-	  {
-      "min": 79,
-      "max": 99,
-      "icon": "images/gauche.png"
-    }
-  ],
-  "exits": [
+      "min": 80,
+      "max": 100,
+      "icon": "images/drgh.png",
+      "insideIcon": "images/drgh.png",
+      "_irregular": true
+    },
     {
       "min": 194,
       "max": 214,
-      "icon": "images/50.png"
+      "icon": "images/danger.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    },
+    {
+      "min": 260,
+      "max": 280,
+      "icon": "images/droit.png",
+      "insideIcon": "images/danger.png",
+      "_irregular": true
     }
-  ]
+  ],
+  "inside": [],
+  "exits": []
 },
   {
   "name": "feux",
@@ -1043,6 +1047,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
