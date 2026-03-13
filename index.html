@@ -158,65 +158,57 @@ function bearing(lat1, lon1, lat2, lon2) {
 */
 
 const circles = [
- {
-  "name": "bifurc",
-  "lat": 48.22022660399256,
-  "lng": -1.0922062397003176,
-  "radius": 70,
-  "iconApproach": null,
-  "iconExit": null,
-  "entries": [],
-  "inside": [
+{
+  "name": "bifurc1",
+  "lat": 48.220190862511764,
+  "lng": -1.092174053192139,
+  "radius": 62,
+  "iconApproach": "images/gauche.png",
+  "iconExit": "images/danger.png",
+  "entries": [
     {
-      "min": 136,
-      "max": 156,
-      "icon": "images/gauche.png"
+      "min": 126,
+      "max": 166,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
     }
   ],
-  "exits": []
+  "inside": [],
+  "exits": [
+    {
+      "min": 305,
+      "max": 345,
+      "icon": "images/danger.png",
+      "_irregular": true
+    }
+  ]
 },
-	{
+{
   "name": "bifurc2",
-  "lat": 48.220744852659884,
-  "lng": -1.093445420265198,
-  "radius": 59,
+  "lat": 48.22087709458304,
+  "lng": -1.0937297344207766,
+  "radius": 78,
   "iconApproach": null,
   "iconExit": null,
-  "entries": [],
-  "inside": [
+  "entries": [
     {
-      "min": 286,
-      "max": 306,
-      "icon": "images/droite.png"
+      "min": 270,
+      "max": 310,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
     }
   ],
-  "exits": []
-},
- {
-  "name": "RP Cerf",
-  "lat": 48.29561054062567,
-  "lng": -0.9292513132095338,
-  "radius": 41,
-  "iconApproach": null,
-  
-  "inside": [
-	    {
-      "min": 63,
-      "max": 83,
-      "icon": "images/gauche.png"
-    },
+  "inside": [],
+  "exits": [
     {
-      "min": 261,
-      "max": 281,
-      "icon": "images/gauche.png"
-    },
-	    {
-      "min": 160,
-      "max": 180,
-      "icon": "images/droite.png"
+      "min": 90,
+      "max": 130,
+      "icon": "images/danger.png",
+      "_irregular": true
     }
-  ],
-  "exits": [ ]
+  ]
 },
 {
   "name": "RP Market",
@@ -324,111 +316,185 @@ const circles = [
   "exits": []
 },
 {
-  "name": "RP BE",
-  "lat": 48.29678468882357,
-  "lng": -0.9347310662269593,
-  "radius": 50,
+  "name": "RP BE ouest",
+  "lat": 48.296556285210585,
+  "lng": -0.9340792894363404,
+  "radius": 67,
   "iconApproach": "images/rond.png",
+  "iconExit": "images/pietons.png",
   "entries": [
     {
-      "min": 35,
-      "max": 55,
-      "icon": "images/gauche.png"
-    },
-    {
-      "min": 110,
-      "max": 130,
-      "icon": "images/droit.png"
-    },
-    {
-      "min": 190,
-      "max": 210,
-      "icon": "images/droite.png"
-    },
-    {
-      "min": 273,
-      "max": 293,
-      "icon": "images/droit.png"
+      "min": 101,
+      "max": 123,
+      "icon": "images/rond.png",
+      "insideIcon": "images/rond.png",
+      "_irregular": true
     }
   ],
-  "inside": [
-	    {
-      "min": 35,
-      "max": 55,
-      "icon": "images/gauche.png"
-    },
-    {
-      "min": 110,
-      "max": 130,
-      "icon": "images/droit.png"
-    },
-    {
-      "min": 190,
-      "max": 210,
-      "icon": "images/droite.png"
-    },
-    {
-      "min": 273,
-      "max": 293,
-      "icon": "images/droit.png"
-    }
-  ],
+  "inside": [],
   "exits": [
     {
-      "min": 110,
-      "max": 130,
-      "icon": "images/pietons.png"
-    },
-    {
-      "min": 273,
-      "max": 293,
-      "icon": "images/pietons.png"
+      "min": 286,
+      "max": 306,
+      "icon": "images/pietons.png",
+      "_irregular": true
     }
-	]
+  ]
 },
-{
-  "name": "dev Chail",
-  "lat": 48.28066723600809,
-  "lng": -0.9622988104820253,
-  "radius": 80,
-  
-  "iconExit": null,
-  "entries": [  ],
-  "inside": [
-	    {
-      "min": 32,
-      "max": 52,
-      "icon": "images/droite.png"
-    },
+	{
+  "name": "RP BE est",
+  "lat": 48.2968667711224,
+  "lng": -0.935039520263672,
+  "radius": 38,
+  "iconApproach": "images/danger.png",
+  "iconExit": "images/pietons.png",
+  "entries": [
     {
-      "min": 215,
-      "max": 235,
-      "icon": "images/gauche.png"
+      "min": 264,
+      "max": 286,
+      "icon": "images/rond.png",
+      "insideIcon": "images/rond.png",
+      "_irregular": true
     }
   ],
-  "exits": []
+  "inside": [],
+  "exits": [
+    {
+      "min": 105,
+      "max": 125,
+      "icon": "images/pietons.png",
+      "_irregular": true
+    }
+  ]
+},
+{
+  "name": "Chailland",
+  "lat": 48.28164360115601,
+  "lng": -0.960906744003296,
+  "radius": 181,
+  "iconApproach": "images/gauche.png",
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 32,
+      "max": 54,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 196,
+      "max": 212,
+      "icon": "images/danger.png",
+      "_irregular": true
+    },
+    {
+      "min": 219,
+      "max": 231,
+      "icon": "images/90.png",
+      "_irregular": true
+    }
+  ]
+},
+	{
+  "name": "dev Chailland",
+  "lat": 48.279830081743526,
+  "lng": -0.9635996818542482,
+  "radius": 146,
+  "iconApproach": "images/droite.png",
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 213,
+      "max": 233,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 122,
+      "max": 142,
+      "icon": "images/danger.png",
+      "_irregular": true
+    },
+    {
+      "min": 35,
+      "max": 55,
+      "icon": "images/90.png",
+      "_irregular": true
+    }
+  ]
 },
 {
   "name": "st pierre",
-  "lat": 48.26334838006054,
-  "lng": -0.9870582818984986,
-  "radius": 90,
-  "iconExit": "images/danger.png",
-  "entries": [],
-  "inside": [
-	      {
-      "min": 34,
-      "max": 54,
-      "icon": "images/droite.png"
+  "lat": 48.26386262093114,
+  "lng": -0.9863877296447755,
+  "radius": 108,
+  "iconApproach": "images/droite.png",
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 33,
+      "max": 53,
+      "icon": "images/droite.png",
+      "insideIcon": "images/droite.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 212,
+      "max": 232,
+      "icon": "images/90.png",
+      "_irregular": true
     },
     {
-      "min": 211,
-      "max": 231,
-      "icon": "images/gauche.png"
+      "min": 247,
+      "max": 267,
+      "icon": "images/danger.png",
+      "_irregular": true
     }
   ]
- },
-
+},
+{
+  "name": "dev st pierre",
+  "lat": 48.262769852896994,
+  "lng": -0.9879004955291749,
+  "radius": 113,
+  "iconApproach": "images/gauche.png",
+  "iconExit": null,
+  "entries": [
+    {
+      "min": 212,
+      "max": 232,
+      "icon": "images/gauche.png",
+      "insideIcon": "images/gauche.png",
+      "_irregular": true
+    }
+  ],
+  "inside": [],
+  "exits": [
+    {
+      "min": 34,
+      "max": 54,
+      "icon": "images/90.png",
+      "_irregular": true
+    },
+    {
+      "min": 338,
+      "max": 2,
+      "icon": "images/danger.png",
+      "_irregular": true
+    }
+  ]
+},
 {
   "name": "Vitré",
   "lat": 48.29702915093351,
@@ -977,6 +1043,7 @@ function stopTracking(){
 </script>
 </body>
 </html>
+
 
 
 
