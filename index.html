@@ -160,55 +160,49 @@ function bearing(lat1, lon1, lat2, lon2) {
 const circles = [
 {
   "name": "bifurc1",
-  "lat": 48.220190862511764,
-  "lng": -1.092174053192139,
-  "radius": 62,
+  "lat": 48.2201193794753,
+  "lng": -1.0920667648315432,
+  "radius": 64,
   "iconApproach": "images/gauche.png",
-  "iconExit": "images/danger.png",
+  "iconExit": "images/gauche.png",
   "entries": [
     {
-      "min": 126,
-      "max": 166,
-      "icon": "images/gauche.png",
-      "insideIcon": "images/gauche.png",
-      "_irregular": true
+      "min": 136,
+      "max": 156,
+      "icon": "images/gauche.png"
     }
   ],
-  "inside": [],
-  "exits": [
+  "inside": [
     {
-      "min": 305,
-      "max": 345,
-      "icon": "images/danger.png",
-      "_irregular": true
+      "min": 136,
+      "max": 156,
+      "icon": "images/gauche.png"
     }
-  ]
+  ],
+  "exits": []
 },
 {
   "name": "bifurc2",
-  "lat": 48.22087709458304,
-  "lng": -1.0937297344207766,
-  "radius": 78,
-  "iconApproach": null,
-  "iconExit": null,
+  "lat": 48.22101291025667,
+  "lng": -1.094244718551636,
+  "radius": 115,
+  "iconApproach": "images/droite.png",
+  "iconExit": "images/droite.png",
   "entries": [
     {
-      "min": 270,
-      "max": 310,
-      "icon": "images/droite.png",
-      "insideIcon": "images/droite.png",
-      "_irregular": true
+      "min": 289,
+      "max": 309,
+      "icon": "images/droite.png"
     }
   ],
-  "inside": [],
-  "exits": [
+  "inside": [
     {
-      "min": 90,
-      "max": 130,
-      "icon": "images/danger.png",
-      "_irregular": true
+      "min": 289,
+      "max": 309,
+      "icon": "images/droite.png"
     }
-  ]
+  ],
+  "exits": []
 },
 {
   "name": "RP Market",
@@ -368,130 +362,121 @@ const circles = [
   ]
 },
 {
-  "name": "Chailland",
-  "lat": 48.28164360115601,
-  "lng": -0.960906744003296,
-  "radius": 181,
+  "name": "Dev Chailland",
+  "lat": 48.28145439839867,
+  "lng": -0.9611749649047853,
+  "radius": 107,
   "iconApproach": "images/gauche.png",
-  "iconExit": null,
+  "iconExit": "images/gauche.png",
   "entries": [
     {
       "min": 32,
-      "max": 54,
-      "icon": "images/gauche.png",
-      "insideIcon": "images/gauche.png",
-      "_irregular": true
+      "max": 52,
+      "icon": "images/gauche.png"
     }
   ],
-  "inside": [],
+  "inside": [
+    {
+      "min": 32,
+      "max": 52,
+      "icon": "images/gauche.png"
+    }
+  ],
   "exits": [
     {
-      "min": 196,
-      "max": 212,
-      "icon": "images/danger.png",
-      "_irregular": true
-    },
-    {
-      "min": 219,
-      "max": 231,
-      "icon": "images/90.png",
-      "_irregular": true
+      "min": 216,
+      "max": 236,
+      "icon": "images/gauche.png"
     }
   ]
 },
-	{
-  "name": "dev Chailland",
-  "lat": 48.279830081743526,
-  "lng": -0.9635996818542482,
-  "radius": 146,
+		{
+  "name": "Dev chailland ret",
+  "lat": 48.27977296197603,
+  "lng": -0.963653326034546,
+  "radius": 136,
   "iconApproach": "images/droite.png",
-  "iconExit": null,
+  "iconExit": "images/droite.png",
   "entries": [
     {
-      "min": 213,
-      "max": 233,
+      "min": 214,
+      "max": 234,
       "icon": "images/droite.png",
-      "insideIcon": "images/droite.png",
-      "_irregular": true
+      "insideIcon": "images/droite.png"
     }
   ],
-  "inside": [],
-  "exits": [
+  "inside": [
     {
-      "min": 122,
-      "max": 142,
-      "icon": "images/danger.png",
-      "_irregular": true
-    },
+      "min": 214,
+      "max": 234,
+      "icon": "images/droite.png"
+    }
+  ],
+  "exits": [
     {
       "min": 35,
       "max": 55,
-      "icon": "images/90.png",
-      "_irregular": true
+      "icon": "images/droite.png"
     }
   ]
 },
 {
-  "name": "st pierre",
-  "lat": 48.26386262093114,
-  "lng": -0.9863877296447755,
-  "radius": 108,
+  "name": "Dev St Pierre",
+  "lat": 48.263876905325944,
+  "lng": -0.9863126277923585,
+  "radius": 81,
   "iconApproach": "images/droite.png",
-  "iconExit": null,
+  "iconExit": "images/droite.png",
   "entries": [
     {
-      "min": 33,
-      "max": 53,
+      "min": 32,
+      "max": 52,
       "icon": "images/droite.png",
-      "insideIcon": "images/droite.png",
-      "_irregular": true
+      "insideIcon": "images/droite.png"
     }
   ],
-  "inside": [],
+  "inside": [
+    {
+      "min": 32,
+      "max": 52,
+      "icon": "images/droite.png"
+    }
+  ],
   "exits": [
     {
-      "min": 212,
-      "max": 232,
-      "icon": "images/90.png",
-      "_irregular": true
-    },
-    {
-      "min": 247,
-      "max": 267,
-      "icon": "images/danger.png",
-      "_irregular": true
+      "min": 213,
+      "max": 233,
+      "icon": "images/droite.png"
     }
   ]
 },
 {
-  "name": "dev st pierre",
-  "lat": 48.262769852896994,
-  "lng": -0.9879004955291749,
-  "radius": 113,
+  "name": "Ret St pierre",
+  "lat": 48.2624984428354,
+  "lng": -0.988297462463379,
+  "radius": 128,
   "iconApproach": "images/gauche.png",
-  "iconExit": null,
+  "iconExit": "images/gauche.png",
   "entries": [
     {
-      "min": 212,
-      "max": 232,
+      "min": 214,
+      "max": 234,
       "icon": "images/gauche.png",
-      "insideIcon": "images/gauche.png",
-      "_irregular": true
+      "insideIcon": "images/gauche.png"
     }
   ],
-  "inside": [],
+  "inside": [
+    {
+      "min": 214,
+      "max": 234,
+      "icon": "images/gauche.png"
+    }
+  ],
   "exits": [
     {
       "min": 34,
       "max": 54,
-      "icon": "images/90.png",
-      "_irregular": true
-    },
-    {
-      "min": 338,
-      "max": 2,
-      "icon": "images/danger.png",
-      "_irregular": true
+      "icon": "images/gauche.png"
     }
   ]
 },
