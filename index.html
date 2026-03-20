@@ -74,7 +74,7 @@
     <button onclick="toggleNight()">Mode nuit</button>
   </div>
 
-  <footer>CircleEngine PRO v4 coelod v0.3.4</footer>
+  <footer>CircleEngine PRO v4 coelod v0.3.5</footer>
 
 <script>
 /* ============================================================
@@ -781,7 +781,7 @@ function circleETA(c, pos, speedKmh) {
 function okEntryDir(c, heading) {
     if (c.entryMin==null) return true;
     const h = ((heading % 360) + 360) % 360;
-    return (
+    return !(
         (c.entryMin <= c.entryMax && h >= c.entryMin && h <= c.entryMax) ||
         (c.entryMin >  c.entryMax && (h >= c.entryMin || h <= c.entryMax))
     );
@@ -790,7 +790,7 @@ function okEntryDir(c, heading) {
 function okExitDir(c, heading) {
     if (c.exitMin==null) return true;
     const h = ((heading % 360) + 360) % 360;
-    return (
+    return !(
         (c.exitMin <= c.exitMax && h >= c.exitMin && h <= c.exitMax) ||
         (c.exitMin >  c.exitMax && (h >= c.exitMin || h <= c.exitMax))
     );
